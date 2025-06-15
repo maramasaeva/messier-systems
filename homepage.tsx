@@ -238,6 +238,7 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
   const [shuffledPlaylist, setShuffledPlaylist] = useState<SpotifyApi.TrackObjectFull[]>(globalShuffledPlaylist)
   const [player, setPlayer] = useState<Spotify.Player | null>(null)
   const [isSpotifyLoggedIn, setIsSpotifyLoggedIn] = useState(false)
+  const [volume, setVolume] = useState(50) // Default volume at 50%
   const windowRef = useRef<HTMLDivElement>(null)
 
   // Initialize static noise on first component render
@@ -313,6 +314,11 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
             
             // Store the device ID for later use
             localStorage.setItem('spotify_device_id', device_id)
+            
+            // Set initial volume
+            spotifyApi.setVolume(volume).catch(err => {
+              console.error('Error setting initial volume:', err);
+            });
             
             // Skip transfer and just load the playlist - this avoids the transfer error
             loadPlaylist();
@@ -789,7 +795,7 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
                 <div className="text-pink-400 mb-4">Login to Spotify to view your playlist</div>
                 <button 
                   onClick={handleSpotifyLogin}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                  className="px-4 py-2 bg-green-600 text-white rounded-none hover:bg-green-700 transition-colors"
                 >
                   Connect to Spotify
                 </button>
@@ -818,6 +824,41 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
                 <button onClick={handleNext} className="text-gray-400 hover:text-pink-400 transition-colors">
                   <SkipForward size={16} />
                 </button>
+              </div>
+
+              {/* Volume Control */}
+              <div className="mt-3 flex items-center space-x-2">
+                <div className="text-xs text-gray-400">vol</div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume}
+                  className="w-full h-1 bg-gray-700 rounded-none appearance-none cursor-pointer"
+                  style={{
+                    WebkitAppearance: 'none',
+                    appearance: 'none',
+                    outline: 'none',
+                    background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${volume}%, #374151 ${volume}%, #374151 100%)`,
+                    height: '2px'
+                  }}
+                  onChange={(e) => {
+                    const newVolume = parseInt(e.target.value);
+                    setVolume(newVolume);
+                    
+                    // Set the volume using the Spotify API
+                    if (player) {
+                      const token = localStorage.getItem('spotify_access_token');
+                      if (token) {
+                        spotifyApi.setAccessToken(token);
+                        spotifyApi.setVolume(newVolume)
+                          .catch(error => {
+                            console.error('Error setting volume:', error);
+                          });
+                      }
+                    }
+                  }}
+                />
               </div>
 
               {/* Static indicator */}
