@@ -1106,6 +1106,7 @@ export default function HackerHomepage() {
   const [nextZIndex, setNextZIndex] = useState(1000)
   const [isTerminalActive, setIsTerminalActive] = useState(false)
   const [terminalInput, setTerminalInput] = useState("")
+  const [terminalMessages, setTerminalMessages] = useState<string[]>([])
   const [typedText, setTypedText] = useState("")
   const [isTypingComplete, setIsTypingComplete] = useState(false)
   const [showCursor, setShowCursor] = useState(true)
@@ -1454,6 +1455,13 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       return () => clearInterval(cursorInterval)
     }
   }, [isTypingComplete])
+  
+  // Keep focus on input after submitting
+  useEffect(() => {
+    if (isTerminalActive && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [isTerminalActive, terminalMessages])
 
   // Continuous glitch effect for completed ASCII art - more intense
   useEffect(() => {
@@ -1548,7 +1556,13 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
 
   const handleTerminalKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      // Handle terminal commands here if needed
+      if (terminalInput.trim()) {
+        // Add the entered command to messages
+        setTerminalMessages(prev => [...prev, 
+          `> ${terminalInput}`,
+          "message received."
+        ])
+      }
       setTerminalInput("")
     } else if (e.key === "Escape") {
       setIsTerminalActive(false)
@@ -1685,6 +1699,18 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
                     </button>
                   </div>
                 )}
+                {/* Terminal messages */}
+                {terminalMessages.length > 0 && (
+                  <div className="mt-4 space-y-1">
+                    {terminalMessages.map((msg, i) => (
+                      <div key={i} className={`font-mono text-sm ${msg.startsWith('>') ? 'text-pink-400' : 'text-green-400'}`}>
+                        {msg}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Terminal input */}
                 {isTerminalActive && (
                   <div className="mt-4 flex items-center">
                     <span className="text-pink-400 mr-2">{">"}</span>
