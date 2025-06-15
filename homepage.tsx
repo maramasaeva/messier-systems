@@ -3,6 +3,7 @@
 import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
+import Head from "next/head"
 import {
   Code,
   User,
@@ -1651,9 +1652,56 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
     };
   }, []);
 
+  // Define structured data for better SEO
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mara Messier",
+    "alternateName": "Mara Masaeva",
+    "description": "AI engineer & creative technologist",
+    "url": "https://messier-systems.vercel.app/",
+    "sameAs": [
+      "https://github.com/maramasaeva",
+      "https://www.linkedin.com/in/maramasaeva/",
+      "https://x.com/rssmrm?s=21",
+      "https://www.goodreads.com/user/show/32680117-mara",
+      "https://open.spotify.com/artist/2jzQP1uGUsHFUg0OheUt5W"
+    ],
+    "jobTitle": "AI Engineer",
+    "knowsAbout": ["AI", "Machine Learning", "Creative Technology", "Generative Art", "Audio Processing"]
+  };
+
   return (
-    <div className="min-h-screen h-screen max-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10 flex flex-col">
-      {/* Static video overlay */}
+    <>
+      <Head>
+        <title>Mara Messier | AI Engineer & Creative Technologist</title>
+        <meta name="description" content="Mara Messier (Mara Masaeva) is an AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
+        <meta name="keywords" content="Mara Messier, Mara Masaeva, AI Engineer, Creative Technologist, Machine Learning, Generative Art, Audio Processing" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Mara Messier | AI Engineer & Creative Technologist" />
+        <meta property="og:description" content="AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
+        <meta property="og:url" content="https://messier-systems.vercel.app/" />
+        <meta property="og:site_name" content="Mara Messier" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="Mara Messier | AI Engineer & Creative Technologist" />
+        <meta property="twitter:description" content="AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
+        <meta property="twitter:site" content="@rssmrm" />
+        
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://messier-systems.vercel.app/" />
+        
+        {/* Structured data for SEO */}
+        <script 
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </Head>
+      <div className="min-h-screen h-screen max-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10 flex flex-col">
+        {/* Static video overlay */}
       <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden">
         <video 
           ref={videoRef}
@@ -1904,5 +1952,6 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
         />
       ))}
     </div>
+    </>
   )
 }
