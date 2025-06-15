@@ -809,7 +809,7 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
                 <div
                   className={`text-green-400 font-mono text-sm whitespace-nowrap ${isPlaying ? "animate-pulse" : ""}`}
                 >
-                      {currentSong?.name ? `${currentSong.name} - ${currentSong.artists[0]?.name || 'Unknown'}` : 'Select a track...'}
+                      {currentSong?.name ? `${currentSong.name} - ${currentSong.artists[0]?.name || 'Unknown'}` : 'select a track...'}
                 </div>
               </div>
 
