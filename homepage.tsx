@@ -1566,7 +1566,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
   }, []);
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10 transform scale-85 origin-center">
+    <div className="min-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10">
       {/* Static video overlay */}
       <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden">
         <video 
