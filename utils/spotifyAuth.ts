@@ -2,7 +2,17 @@ import SpotifyWebApi from 'spotify-web-api-js';
 
 // Hard-code the client ID for development to ensure it's always available
 const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID || '8c6c0ff17bee46ea9aec45c4d095cfcb';
-const redirectUri = 'http://127.0.0.1:3000/callback'; // Make sure this matches your Spotify app settings
+
+// Dynamic redirect URI that works both locally and in production
+const getRedirectUri = () => {
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI || 'http://localhost:3000/callback';
+  }
+  
+  // Use the current origin in the browser
+  const origin = window.location.origin;
+  return `${origin}/callback`;
+};
 
 const scopes = [
   'streaming',
@@ -42,6 +52,7 @@ async function generateCodeChallenge(codeVerifier: string): Promise<string> {
 
 // Get the Spotify login URL using Authorization Code Flow with PKCE
 export const getSpotifyLoginUrl = async () => {
+  const redirectUri = getRedirectUri();
   console.log('Using client ID:', clientId);
   console.log('Using redirect URI:', redirectUri);
   
@@ -90,6 +101,7 @@ export const getAccessToken = async (code: string): Promise<string | null> => {
     // In a real production app, this would be done server-side to keep client_secret secure
     // For this demo, we'll use a proxy endpoint to exchange the code for a token
     const tokenUrl = 'https://accounts.spotify.com/api/token';
+    const redirectUri = getRedirectUri();
     
     // Get the code verifier from localStorage that was stored during authorization request
     const codeVerifier = localStorage.getItem('spotify_code_verifier');
