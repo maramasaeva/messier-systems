@@ -29,7 +29,44 @@ declare namespace SpotifyApi {
     name: string;
     artists: Array<{name: string}>;
     duration_ms: number;
+    uri?: string;
+    preview_url?: string;
+    track?: any;
   }
+}
+
+// Define Spotify namespace for TypeScript
+declare namespace Spotify {
+  interface PlayerInit {
+    name: string;
+    getOAuthToken: (callback: (token: string) => void) => void;
+    volume?: number;
+  }
+
+  interface Player {
+    connect(): Promise<boolean>;
+    disconnect(): void;
+    addListener(event: string, callback: (data: any) => void): void;
+    removeListener(event: string, callback?: (data: any) => void): void;
+    getCurrentState(): Promise<any>;
+    setName(name: string): Promise<void>;
+    getVolume(): Promise<number>;
+    setVolume(volume: number): Promise<void>;
+    pause(): Promise<void>;
+    resume(): Promise<void>;
+    togglePlay(): Promise<void>;
+    seek(position_ms: number): Promise<void>;
+    previousTrack(): Promise<void>;
+    nextTrack(): Promise<void>;
+  }
+}
+
+// Define global window interface
+interface Window {
+  Spotify: {
+    Player: new (options: Spotify.PlayerInit) => Spotify.Player;
+  };
+  onSpotifyWebPlaybackSDKReady: () => void;
 }
 
 interface WindowData {
