@@ -1240,10 +1240,10 @@ export default function HackerHomepage() {
 
   const fullText = `hello, u, cyberspace traveller, fragment of ghost signals. u have arrived, somehow, at my glitched-out node on the far shore of the digital.  my name is mara messier.
 
-i mess everything up. language, code, dreams, and decay. i'm interested in the liminal, the broken, the beautiful ;;  what emerges when systems fail, when bodies distort,, a softmachine.
+i mess everything up. language, code, dreams, and decay. i will build what is broken, beautiful ;-;  4ever looking for what emerges when systems fail, when bodies distort,, a softmachine
 
-// here, u will find my rituals of syntax, architectures of glitchdreams
-// this body of work is a corrupted archive. this mind is a softwar[e] loop.
+⊹ here, u will find my rituals of syntax, architectures of glitchdreams
+⊹ this body of work is a corrupted archive. this mind is a softwar[e] loop.
 
 this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
 
