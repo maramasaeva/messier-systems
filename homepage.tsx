@@ -1117,6 +1117,7 @@ export default function HackerHomepage() {
   const [showAudioUnmutePrompt, setShowAudioUnmutePrompt] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Add global style for text selection
   useEffect(() => {
@@ -1130,6 +1131,29 @@ export default function HackerHomepage() {
       ::-moz-selection {
         background-color: rgba(236, 72, 153, 0.3); /* transparent pink for Firefox */
         color: inherit;
+      }
+      
+      /* Custom scrollbar styles */
+      .scrollbar-thin::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      .scrollbar-thin::-webkit-scrollbar-track {
+        background: rgba(31, 41, 55, 0.5);
+      }
+      
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(236, 72, 153, 0.5);
+      }
+      
+      .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+        background: rgba(236, 72, 153, 0.7);
+      }
+      
+      /* Firefox scrollbar */
+      .scrollbar-thin {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(236, 72, 153, 0.5) rgba(31, 41, 55, 0.5);
       }
     `;
     
@@ -1462,6 +1486,13 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       inputRef.current.focus()
     }
   }, [isTerminalActive, terminalMessages])
+  
+  // Scroll to bottom when new messages are added
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [terminalMessages])
 
   // Continuous glitch effect for completed ASCII art - more intense
   useEffect(() => {
@@ -1621,7 +1652,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
   }, []);
 
   return (
-    <div className="min-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10">
+    <div className="min-h-screen h-screen max-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10 flex flex-col">
       {/* Static video overlay */}
       <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden">
         <video 
@@ -1671,9 +1702,9 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       </div>
 
       {/* terminal content */}
-      <div className="relative z-10 p-6 min-h-[calc(100vh-60px)]">
-        {/* terminal prompt and typed content */}
-        <div className="mb-8 mt-16">
+      <div className="relative z-10 p-6 h-full flex flex-col">
+        {/* terminal prompt and typed content - fixed height section */}
+        <div className="mt-16 flex-shrink-0">
           <div className="font-mono text-sm">
             <div className="flex items-start">
               <span className="text-pink-400 mr-2"><GlitchText text="messier@terminal:~$" intensity={2} /></span>
@@ -1688,169 +1719,177 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
                     </>
                   )}
                 </div>
-                {isTypingComplete && !isTerminalActive && (
-                  <div className="mt-4">
-                    <button
-                      onClick={handleTerminalClick}
-                      className="text-gray-500/70 hover:text-gray-300 transition-colors cursor-text"
-                    >
-                      {"> ready for input"}
-                      <span className="animate-pulse">_</span>
-                    </button>
-                  </div>
-                )}
-                {/* Terminal messages */}
-                {terminalMessages.length > 0 && (
-                  <div className="mt-4 space-y-1">
-                    {terminalMessages.map((msg, i) => (
-                      <div key={i} className={`font-mono text-sm ${msg.startsWith('>') ? 'text-pink-400' : 'text-green-400'}`}>
-                        {msg}
-                      </div>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Terminal input */}
-                {isTerminalActive && (
-                  <div className="mt-4 flex items-center">
-                    <span className="text-pink-400 mr-2">{">"}</span>
-                    <input
-                      ref={inputRef}
-                      type="text"
-                      value={terminalInput}
-                      onChange={(e) => setTerminalInput(e.target.value)}
-                      onKeyDown={handleTerminalKeyDown}
-                      onBlur={() => setIsTerminalActive(false)}
-                      className="bg-transparent text-green-400 outline-none border-none font-mono flex-1"
-                      placeholder=""
-                    />
-                    <span className="text-green-400 animate-pulse">_</span>
-                  </div>
-                )}
+                <div className="max-h-[300px] overflow-hidden">
+                  {isTypingComplete && !isTerminalActive && (
+                    <div className="mt-4">
+                      <button
+                        onClick={handleTerminalClick}
+                        className="text-gray-500/70 hover:text-gray-300 transition-colors cursor-text"
+                      >
+                        {"> ready for input"}
+                        <span className="animate-pulse">_</span>
+                      </button>
+                    </div>
+                  )}
+                  {/* Terminal messages - scrollable area */}
+                  {terminalMessages.length > 0 && (
+                    <div className="mt-4 space-y-1 max-h-[150px] overflow-y-auto scrollbar-thin scrollbar-thumb-pink-400 scrollbar-track-gray-900 pr-2">
+                      {terminalMessages.map((msg, i) => (
+                        <div key={i} className={`font-mono text-sm ${msg.startsWith('>') ? 'text-pink-400' : 'text-green-400'}`}>
+                          {msg}
+                        </div>
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </div>
+                  )}
+                  
+                  {/* Terminal input */}
+                  {isTerminalActive && (
+                    <div className="mt-4 flex items-center">
+                      <span className="text-pink-400 mr-2">{">"}</span>
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={terminalInput}
+                        onChange={(e) => setTerminalInput(e.target.value)}
+                        onKeyDown={handleTerminalKeyDown}
+                        onBlur={() => setIsTerminalActive(false)}
+                        className="bg-transparent text-green-400 outline-none border-none font-mono flex-1"
+                        placeholder=""
+                      />
+                      <span className="text-green-400 animate-pulse">_</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Currently playing song display or static audio prompt - centered between buttons */}
-        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-20">
-          {showAudioUnmutePrompt ? (
-            <div 
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent event bubbling
-                handleUnmuteAudio();
-              }}
-              className="cursor-pointer bg-black/70 border border-pink-400/30 px-4 py-2 rounded-none animate-pulse"
-            >
-              <div className="text-pink-400 font-mono text-xs flex items-center">
-                <span className="mr-2">▷</span>
-                <span>unvoid</span>
+        <div className="flex-grow"></div>
+
+        {/* Fixed bottom section that stays in place */}
+        <div className="relative z-20">
+          {/* Currently playing song display or static audio prompt - centered between buttons */}
+          <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-20">
+            {showAudioUnmutePrompt ? (
+              <div 
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent event bubbling
+                  handleUnmuteAudio();
+                }}
+                className="cursor-pointer bg-black/70 border border-pink-400/30 px-4 py-2 rounded-none animate-pulse"
+              >
+                <div className="text-pink-400 font-mono text-xs flex items-center">
+                  <span className="mr-2">▷</span>
+                  <span>unvoid</span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="text-white font-mono text-xs opacity-70 whitespace-nowrap text-center pointer-events-none">
-              <GlitchText text={currentSongDisplay} intensity={1.5} />
+            ) : (
+              <div className="text-white font-mono text-xs opacity-70 whitespace-nowrap text-center pointer-events-none">
+                <GlitchText text={currentSongDisplay} intensity={1.5} />
+              </div>
+            )}
+          </div>
+
+          {/* ASCII Art - centered between buttons */}
+          {asciiArt && (
+            <div className="absolute bottom-14 left-1/2 transform -translate-x-1/2 pointer-events-none">
+              <pre className="text-gray-600/40 font-mono text-xs leading-tight whitespace-pre select-none">
+                {asciiArt}
+              </pre>
             </div>
           )}
-        </div>
 
-        {/* ASCII Art - centered between buttons */}
-        {asciiArt && (
-          <div className="absolute bottom-14 left-1/2 transform -translate-x-1/2 pointer-events-none">
-            <pre className="text-gray-600/40 font-mono text-xs leading-tight whitespace-pre select-none">
-              {asciiArt}
-            </pre>
+          {/* bottom left navigation buttons - lowered position */}
+          <div className="absolute bottom-0 left-8 flex space-x-6 mb-[-4px]">
+            <button
+              onClick={() => openWindow("about")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-user" />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("work")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-code" />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("tools")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-cog" />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("contact")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-message" />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("music")}
+              className={`text-gray-300 hover:text-pink-400 transition-colors group ${globalIsPlaying ? 'animate-pulse' : ''}`}
+            >
+              <div className={`p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container ${globalIsPlaying ? 'border-green-400/50 shadow-lg shadow-green-400/20' : ''}`}>
+                <GlitchIcon iconClass="hn-play" className={globalIsPlaying ? 'text-green-400' : ''} />
+              </div>
+            </button>
           </div>
-        )}
 
-        {/* bottom left navigation buttons - lowered position */}
-        <div className="absolute bottom-0 left-8 flex space-x-6 mb-[-4px]">
-          <button
-            onClick={() => openWindow("about")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-user" />
-            </div>
-          </button>
-          <button
-            onClick={() => openWindow("work")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-code" />
-            </div>
-          </button>
-          <button
-            onClick={() => openWindow("tools")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-cog" />
-            </div>
-          </button>
-          <button
-            onClick={() => openWindow("contact")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-message" />
-            </div>
-          </button>
-          <button
-            onClick={() => openWindow("music")}
-            className={`text-gray-300 hover:text-pink-400 transition-colors group ${globalIsPlaying ? 'animate-pulse' : ''}`}
-          >
-            <div className={`p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container ${globalIsPlaying ? 'border-green-400/50 shadow-lg shadow-green-400/20' : ''}`}>
-              <GlitchIcon iconClass="hn-play" className={globalIsPlaying ? 'text-green-400' : ''} />
-            </div>
-          </button>
-        </div>
-
-        {/* bottom right external links - lowered position */}
-        <div className="absolute bottom-0 right-8 flex space-x-4 mb-[-4px]">
-          <button
-            onClick={() => handleExternalLink("https://github.com/maramasaeva")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-github" />
-            </div>
-          </button>
-          <button
-            onClick={() => handleExternalLink("https://www.linkedin.com/in/maramasaeva/")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-linkedin" />
-            </div>
-          </button>
-          <button
-            onClick={() => handleExternalLink("https://x.com/rssmrm?s=21")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-x" />
-            </div>
-          </button>
-          <button
-            onClick={() => handleExternalLink("https://www.goodreads.com/user/show/32680117-mara")}
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-book-heart" />
-            </div>
-          </button>
-          <button
-            onClick={() =>
-              handleExternalLink("https://open.spotify.com/artist/2jzQP1uGUsHFUg0OheUt5W?si=kktvqqGoQXyJYw-zLB9DpQ")
-            }
-            className="text-gray-300 hover:text-pink-400 transition-colors group"
-          >
-            <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-              <GlitchIcon iconClass="hn-music" />
-            </div>
-          </button>
+          {/* bottom right external links - lowered position */}
+          <div className="absolute bottom-0 right-8 flex space-x-4 mb-[-4px]">
+            <button
+              onClick={() => handleExternalLink("https://github.com/maramasaeva")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-github" />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("https://www.linkedin.com/in/maramasaeva/")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-linkedin" />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("https://x.com/rssmrm?s=21")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-x" />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("https://www.goodreads.com/user/show/32680117-mara")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-book-heart" />
+              </div>
+            </button>
+            <button
+              onClick={() =>
+                handleExternalLink("https://open.spotify.com/artist/2jzQP1uGUsHFUg0OheUt5W?si=kktvqqGoQXyJYw-zLB9DpQ")
+              }
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon iconClass="hn-music" />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
