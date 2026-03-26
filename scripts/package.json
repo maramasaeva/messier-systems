@@ -1,0 +1,9 @@
+{
+  "name": "substack-to-x",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "twitter-api-v2": "^1.17.0",
+    "fast-xml-parser": "^4.4.0"
+  }
+}

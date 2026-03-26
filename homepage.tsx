@@ -19,7 +19,12 @@ import {
   SkipForward,
   SkipBack,
   ListMusic,
+  FileText,
+  ChevronRight,
+  ExternalLink,
 } from "lucide-react"
+import { discography, streamingLinks } from './data/discography'
+import { epkData } from './data/epk'
 import SpotifyWebApi from 'spotify-web-api-js';
 import { spotifyApi, getSpotifyLoginUrl } from './utils/spotifyAuth'
 
@@ -72,7 +77,7 @@ interface Window {
 
 interface WindowData {
   id: string
-  type: "about" | "work" | "contact" | "music" | "tools"
+  type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk"
   title: string
   position: { x: number; y: number }
   zIndex: number
@@ -229,6 +234,217 @@ const unmuteBgAudio = () => {
     }
   }
 };
+
+// Writing window content with Substack RSS
+const WritingWindowContent = () => {
+  const [posts, setPosts] = useState<{title: string; link: string; pubDate: string}[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/substack')
+      .then(res => res.json())
+      .then(data => {
+        if (data.posts) setPosts(data.posts)
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  return (
+    <div className="font-mono text-sm">
+      <div className="text-pink-400 mb-2">$ cat writing/messinecessity.txt</div>
+      <div className="text-gray-300 space-y-2">
+        <div>publication: <a href="https://substack.com/@maramessier" target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300 underline decoration-pink-400/50 underline-offset-2">messinecessity</a></div>
+        <div>tagline: &quot;my personal void&quot;</div>
+        <div>form: prose poetry / theory-fiction</div>
+        <div className="text-gray-500">themes: queerness as ontology, network theory, hyperstition, digital-physical collapse</div>
+      </div>
+
+      <div className="text-pink-400 mt-4 mb-2">$ ls -la recent_posts/</div>
+      <div className="text-gray-300 ml-4 space-y-1">
+        {loading ? (
+          <div className="text-gray-500 animate-pulse">loading from rss feed...</div>
+        ) : posts.length > 0 ? (
+          posts.map((post, i) => (
+            <div key={i}>
+              <a
+                href={post.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-pink-400 transition-colors"
+              >
+                -rw-r--r-- {post.title.toLowerCase()}
+              </a>
+              {post.pubDate && (
+                <span className="text-gray-500 text-xs ml-2">
+                  {new Date(post.pubDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toLowerCase()}
+                </span>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="text-gray-500">feed unavailable — visit substack directly</div>
+        )}
+      </div>
+
+      <div className="mt-4 border-t border-gray-700 pt-3">
+        <a
+          href="https://substack.com/@maramessier"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-pink-400 hover:text-pink-300 transition-colors text-xs"
+        >
+          → read on substack
+        </a>
+      </div>
+
+      <div className="text-pink-400 mt-4 flex items-center">
+        <span>$</span>
+        <span className="ml-2 animate-pulse">_</span>
+      </div>
+    </div>
+  )
+}
+
+// EPK window content with collapsible sections
+const EpkWindowContent = () => {
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set(["bio"]))
+
+  const toggleSection = (section: string) => {
+    setOpenSections(prev => {
+      const next = new Set(prev)
+      if (next.has(section)) next.delete(section)
+      else next.add(section)
+      return next
+    })
+  }
+
+  const sections = [
+    { id: "bio", label: "bio/" },
+    { id: "music", label: "music/" },
+    { id: "live", label: "live/" },
+    { id: "tech", label: "tech/" },
+    { id: "writing", label: "writing/" },
+    { id: "press", label: "press_photos/" },
+    { id: "contact", label: "contact.txt" },
+  ]
+
+  return (
+    <div className="font-mono text-sm">
+      <div className="text-pink-400 mb-2">$ cat epk/bio.txt</div>
+      <div className="text-gray-300 mb-3">
+        <div>{epkData.bio.name} ({epkData.bio.realName})</div>
+        <div className="text-gray-400">{epkData.bio.pronouns} · {epkData.bio.location}</div>
+        <div className="text-green-400 mt-1">&quot;{epkData.bio.oneLiner}&quot;</div>
+      </div>
+
+      <div className="text-pink-400 mb-2">$ ls -la epk/</div>
+      <div className="space-y-1">
+        {sections.map(({ id, label }) => (
+          <div key={id}>
+            <button
+              onClick={() => toggleSection(id)}
+              className="text-gray-300 hover:text-pink-400 transition-colors w-full text-left"
+            >
+              <ChevronRight size={12} className={`inline mr-1 transition-transform ${openSections.has(id) ? 'rotate-90' : ''}`} />
+              <span className="text-gray-500">drwxr-xr-x</span> {label}
+            </button>
+
+            {openSections.has(id) && (
+              <div className="ml-6 mt-1 mb-2 text-gray-400 text-xs space-y-1 border-l border-gray-700 pl-3">
+                {id === "bio" && (
+                  <div className="whitespace-pre-wrap leading-relaxed">{epkData.bio.description}</div>
+                )}
+
+                {id === "music" && (
+                  <>
+                    <div className="text-gray-500 mb-1">genres: {epkData.music.genres.join(", ")}</div>
+                    {epkData.music.releases.map((r, i) => (
+                      <div key={i}>
+                        <span className="text-pink-400">{r.title}</span> — {r.type}, {r.date}, {r.trackCount} tracks
+                        {r.description && <div className="text-gray-500 ml-2">{r.description}</div>}
+                      </div>
+                    ))}
+                    <div className="mt-2 space-x-3">
+                      <a href={epkData.music.streaming.bandcamp} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">bandcamp</a>
+                      <a href={epkData.music.streaming.spotify} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300">spotify</a>
+                      <a href={epkData.music.streaming.appleMusic} target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300">apple music</a>
+                      <a href={epkData.music.streaming.soundcloud} target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:text-orange-300">soundcloud</a>
+                    </div>
+                  </>
+                )}
+
+                {id === "live" && epkData.live.map((l, i) => (
+                  <div key={i}>
+                    <div className="text-pink-400">{l.event}</div>
+                    <div>&quot;{l.piece}&quot; w/ {l.collaborator}</div>
+                    <div className="text-gray-500">{l.description}</div>
+                    <div className="text-gray-500">tools: {l.tools.join(", ")}</div>
+                  </div>
+                ))}
+
+                {id === "tech" && epkData.tech.map((t, i) => (
+                  <div key={i} className="mb-2">
+                    <div>
+                      {t.url ? (
+                        <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">{t.project}</a>
+                      ) : (
+                        <span className="text-pink-400">{t.project}</span>
+                      )}
+                      {t.role && <span className="text-gray-500"> — {t.role}</span>}
+                    </div>
+                    <div className="text-gray-500">{t.description}</div>
+                  </div>
+                ))}
+
+                {id === "writing" && (
+                  <>
+                    <div>
+                      <a href={epkData.writing.substack} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">{epkData.writing.publication}</a>
+                      <span className="text-gray-500"> — &quot;{epkData.writing.tagline}&quot;</span>
+                    </div>
+                    <div>form: {epkData.writing.form}</div>
+                    <div className="text-gray-500">themes: {epkData.writing.themes.join(", ")}</div>
+                    <div className="text-gray-500">influences: {epkData.writing.influences.join(", ")}</div>
+                  </>
+                )}
+
+                {id === "press" && (
+                  <div className="text-gray-500 italic">[awaiting upload — add images to /press/]</div>
+                )}
+
+                {id === "contact" && (
+                  <>
+                    <div>email: {epkData.contact.email}</div>
+                    <div>web: <a href={epkData.contact.website} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">messier-systems.vercel.app</a></div>
+                    <div>discord: {epkData.contact.socials.discord}</div>
+                    <div className="mt-1 space-x-3">
+                      <a href={epkData.contact.socials.github} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">github</a>
+                      <a href={epkData.contact.socials.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">x/twitter</a>
+                      <a href={epkData.contact.socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">instagram</a>
+                      <a href={epkData.contact.socials.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400">linkedin</a>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 border-t border-gray-700 pt-2">
+        <a
+          href="/epk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-pink-400 hover:text-pink-300 transition-colors text-xs"
+        >
+          → open full epk (shareable link)
+        </a>
+      </div>
+    </div>
+  )
+}
 
 const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindowProps) => {
   const [isDragging, setIsDragging] = useState(false)
@@ -903,10 +1119,58 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
                 → open in spotify
               </a>
             </div>
+
+            {/* Discography */}
+            <div className="border-t border-gray-700 pt-3 mt-3">
+              <div className="text-pink-400 mb-2">$ ls -la discography/</div>
+              <div className="text-gray-300 ml-4 space-y-1">
+                {discography.map((release) => (
+                  <details key={release.title} className="group">
+                    <summary className="cursor-pointer hover:text-pink-400 transition-colors list-none">
+                      <span className="text-gray-500">{release.type === "single" ? "-rw-r--r--" : "drwxr-xr-x"}</span>
+                      {" "}{release.title}/ <span className="text-gray-500"># {release.type}, {release.releaseDate}, {release.tracks.length} track{release.tracks.length !== 1 ? "s" : ""}</span>
+                    </summary>
+                    <div className="ml-4 mt-1 space-y-0.5 text-gray-400 text-xs">
+                      {release.tracks.map((track, i) => (
+                        <div key={i}>
+                          {String(i + 1).padStart(2, "0")}. {track.title}{track.duration ? ` (${track.duration})` : ""}
+                        </div>
+                      ))}
+                      <div className="mt-2 space-x-3">
+                        {release.links.bandcamp && (
+                          <a href={release.links.bandcamp} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">bandcamp</a>
+                        )}
+                        {release.links.spotify && (
+                          <a href={release.links.spotify} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300">spotify</a>
+                        )}
+                        {release.links.appleMusic && (
+                          <a href={release.links.appleMusic} target="_blank" rel="noopener noreferrer" className="text-red-400 hover:text-red-300">apple music</a>
+                        )}
+                      </div>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            {/* Streaming Links */}
+            <div className="border-t border-gray-700 pt-3 mt-3">
+              <div className="text-pink-400 mb-2">$ cat streaming_links.txt</div>
+              <div className="text-gray-300 ml-4 space-y-1 text-xs">
+                <div><a href={streamingLinks.bandcamp} target="_blank" rel="noopener noreferrer" className="hover:text-pink-400 transition-colors">bandcamp → mmessier.bandcamp.com</a></div>
+                <div><a href={streamingLinks.spotify} target="_blank" rel="noopener noreferrer" className="hover:text-green-400 transition-colors">spotify → messier</a></div>
+                <div><a href={streamingLinks.appleMusic} target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition-colors">apple music → messier</a></div>
+                <div><a href={streamingLinks.soundcloud} target="_blank" rel="noopener noreferrer" className="hover:text-orange-400 transition-colors">soundcloud → mara.exe</a></div>
+              </div>
+            </div>
               </>
             )}
           </div>
         )
+      case "writing":
+        return <WritingWindowContent />
+      case "epk":
+        return <EpkWindowContent />
     }
   }
 
@@ -1267,6 +1531,8 @@ export default function HackerHomepage() {
 
 i mess everything up. language, code, dreams, and decay. i will build what is broken, beautiful ;-;  4ever looking for what emerges when systems fail, when bodies distort,, a softmachine
 
+messier by name, messier by nature. chaos is not something that happens to me,,, it is the material i work with. i let it in. i let it stay. i let it make things i couldn't have planned.
+
 ⊹ here, u will find my rituals of syntax, architectures of glitchdreams
 ⊹ this body of work is a corrupted archive. this mind is a softwar[e] loop.
 
@@ -1533,7 +1799,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
     return () => clearInterval(glitchInterval)
   }, [isAsciiComplete])
 
-  const openWindow = (type: "about" | "work" | "contact" | "music" | "tools") => {
+  const openWindow = (type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk") => {
     const windowExists = windows.find((w) => w.type === type)
     if (windowExists) {
       // Focus existing window
@@ -1547,6 +1813,8 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       contact: "messier@terminal: ~/contact",
       music: "messier@terminal: ~/messier_music",
       tools: "messier@terminal: ~/tools_and_skills",
+      writing: "messier@terminal: ~/messinecessity",
+      epk: "messier@terminal: ~/epk",
     }
 
     const newWindow: WindowData = {
@@ -1889,6 +2157,22 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             >
               <div className={`p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container ${globalIsPlaying ? 'border-green-400/50 shadow-lg shadow-green-400/20' : ''}`}>
                 <GlitchIcon iconClass="hn-play" className={globalIsPlaying ? 'text-green-400' : ''} />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("writing")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={Book} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("epk")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={FileText} size={20} />
               </div>
             </button>
           </div>
