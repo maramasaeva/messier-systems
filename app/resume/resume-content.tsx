@@ -7,35 +7,36 @@ export default function ResumeContent() {
     <div className="bg-white text-black font-mono min-h-screen">
       <style jsx global>{`
         @media print {
-          body { margin: 0; padding: 0; }
+          html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
           .no-print { display: none !important; }
-          @page { margin: 0.4in 0.5in; size: letter; }
+          .resume-page { padding: 0 !important; margin: 0 !important; max-width: 100% !important; width: 100% !important; overflow: visible !important; }
+          @page { margin: 0.35in 0.45in; size: letter; }
         }
         @media screen {
-          .resume-page { max-width: 800px; margin: 0 auto; padding: 40px; }
+          .resume-page { max-width: 750px; margin: 0 auto; padding: 40px 50px; }
         }
       `}</style>
 
-      <div className="resume-page text-[10pt] leading-[1.45]">
+      <div className="resume-page text-[9pt] leading-[1.4]">
         {/* Header */}
-        <div className="text-center border-b border-black pb-3 mb-4">
-          <h1 className="text-[20pt] font-bold mb-1">mara masaeva</h1>
-          <div className="text-[9pt] text-gray-600">
+        <div className="text-center border-b border-black pb-2 mb-3">
+          <h1 className="text-[16pt] font-bold mb-0.5">mara masaeva</h1>
+          <div className="text-[8pt] text-gray-600">
             {epkData.bio.pronouns} · {epkData.bio.location} · {epkData.contact.email} · messier-systems.vercel.app · github.com/maramasaeva · linkedin.com/in/maramasaeva
           </div>
         </div>
 
         {/* Summary */}
-        <div className="mb-4">
-          <div className="text-[9pt] leading-[1.4]">
-            {epkData.bio.description}
+        <div className="mb-3">
+          <div className="text-[8.5pt] leading-[1.35]">
+            creative ai engineer with 3+ years of experience building production systems at scale. full-stack, end-to-end ownership: from backend pipelines and agentic architectures to user-facing interfaces. driven by high-impact collaboration with research teams and solving novel, ambiguous problems. deeply motivated by building systems that enhance model safety, reliability, and usefulness, and by shaping how ai systems learn from human preferences and reflect a broad range of human values. also an electronic music producer (messier) and writer (messinecessity on substack).
           </div>
         </div>
 
         {/* Experience */}
-        <div className="mb-4">
-          <h2 className="text-[11pt] font-bold border-b border-gray-400 mb-2 pb-0.5">experience</h2>
-          <div className="space-y-3">
+        <div className="mb-3">
+          <h2 className="text-[10pt] font-bold border-b border-gray-400 mb-1.5 pb-0.5">experience</h2>
+          <div className="space-y-2">
             {epkData.experience.map((exp, i) => (
               <div key={i}>
                 <div className="flex justify-between items-baseline">
@@ -43,12 +44,11 @@ export default function ResumeContent() {
                     <span className="font-bold">{exp.role}</span>
                     <span className="text-gray-600"> @ {exp.company}</span>
                   </div>
-                  <div className="text-[8pt] text-gray-500 whitespace-nowrap ml-4">{exp.period}</div>
+                  <div className="text-[7.5pt] text-gray-500 whitespace-nowrap ml-4">{exp.period}</div>
                 </div>
-                <div className="text-[8pt] text-gray-500 mb-1">{exp.location}</div>
-                <div className="space-y-0.5 ml-2">
+                <div className="space-y-0 ml-2">
                   {exp.highlights.map((h, j) => (
-                    <div key={j} className="text-[9pt] leading-[1.35]">· {h}</div>
+                    <div key={j} className="text-[8pt] leading-[1.3] text-gray-700">· {h}</div>
                   ))}
                 </div>
               </div>
@@ -57,26 +57,26 @@ export default function ResumeContent() {
         </div>
 
         {/* Education */}
-        <div className="mb-4">
-          <h2 className="text-[11pt] font-bold border-b border-gray-400 mb-2 pb-0.5">education</h2>
-          <div className="space-y-1.5">
+        <div className="mb-3">
+          <h2 className="text-[10pt] font-bold border-b border-gray-400 mb-1.5 pb-0.5">education</h2>
+          <div className="space-y-0.5">
             {epkData.education.map((edu, i) => (
-              <div key={i} className="flex justify-between items-baseline">
+              <div key={i} className="flex justify-between items-baseline text-[8.5pt]">
                 <div>
                   <span className="font-bold">{edu.degree}</span>
                   {edu.focus && <span className="text-gray-600">, {edu.focus}</span>}
                   <span className="text-gray-500"> · {edu.institution}</span>
                 </div>
-                <div className="text-[8pt] text-gray-500 whitespace-nowrap ml-4">{edu.period}</div>
+                <div className="text-[7.5pt] text-gray-500 whitespace-nowrap ml-4">{edu.period}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Skills */}
-        <div className="mb-4">
-          <h2 className="text-[11pt] font-bold border-b border-gray-400 mb-2 pb-0.5">skills</h2>
-          <div className="space-y-1 text-[9pt]">
+        <div className="mb-3">
+          <h2 className="text-[10pt] font-bold border-b border-gray-400 mb-1.5 pb-0.5">skills</h2>
+          <div className="space-y-0.5 text-[8pt]">
             <div><span className="font-bold">core:</span> {epkData.skills.core.join(", ")}</div>
             <div><span className="font-bold">programming:</span> {epkData.skills.languages.join(", ")}</div>
             <div><span className="font-bold">frameworks:</span> {epkData.skills.frameworks.join(", ")}</div>
@@ -87,16 +87,14 @@ export default function ResumeContent() {
         </div>
 
         {/* Projects */}
-        <div className="mb-4">
-          <h2 className="text-[11pt] font-bold border-b border-gray-400 mb-2 pb-0.5">projects</h2>
-          <div className="space-y-2">
+        <div className="mb-3">
+          <h2 className="text-[10pt] font-bold border-b border-gray-400 mb-1.5 pb-0.5">projects</h2>
+          <div className="space-y-1">
             {epkData.tech.map((t, i) => (
               <div key={i}>
-                <div>
-                  <span className="font-bold">{t.project}</span>
-                  {t.role && <span className="text-gray-600"> · {t.role}</span>}
-                </div>
-                <div className="text-[9pt] text-gray-600 leading-[1.35]">{t.description}</div>
+                <span className="font-bold text-[8.5pt]">{t.project}</span>
+                {t.role && <span className="text-gray-600 text-[8pt]"> · {t.role}</span>}
+                <span className="text-[8pt] text-gray-600"> · {t.description}</span>
               </div>
             ))}
           </div>
