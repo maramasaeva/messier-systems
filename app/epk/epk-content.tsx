@@ -10,19 +10,37 @@ export default function EpkContent() {
       {/* Print styles */}
       <style jsx global>{`
         @media print {
-          body { background: white !important; color: black !important; }
-          .no-print { display: none !important; }
+          * { color: black !important; background: white !important; border-color: #ccc !important; }
+          body { font-size: 10pt !important; line-height: 1.4 !important; margin: 0 !important; padding: 0 !important; }
+          .no-print, .print-hide { display: none !important; }
           a { color: black !important; text-decoration: underline !important; }
-          .text-pink-400, .text-green-400 { color: black !important; }
+          h1 { font-size: 18pt !important; margin-bottom: 4pt !important; }
+          h2 { font-size: 11pt !important; margin-bottom: 4pt !important; margin-top: 8pt !important; }
+          section { margin-bottom: 8pt !important; page-break-inside: avoid; }
+          .border-l { border-left: 1px solid #999 !important; padding-left: 8pt !important; }
+          .max-w-3xl { max-width: 100% !important; padding: 0.5in !important; }
+          .mb-12 { margin-bottom: 8pt !important; }
+          .mb-10 { margin-bottom: 8pt !important; }
+          .space-y-6 > * + * { margin-top: 6pt !important; }
+          .space-y-4 > * + * { margin-top: 4pt !important; }
+          .space-y-3 > * + * { margin-top: 3pt !important; }
+          .py-12 { padding-top: 0.3in !important; padding-bottom: 0 !important; }
+          .pb-8 { padding-bottom: 6pt !important; }
+          .text-3xl { font-size: 18pt !important; }
+          .text-lg { font-size: 11pt !important; }
+          .text-sm { font-size: 9pt !important; }
+          .text-xs { font-size: 8pt !important; }
+          .leading-relaxed { line-height: 1.3 !important; }
+          @page { margin: 0.4in 0.5in; size: letter; }
         }
       `}</style>
 
       <div className="max-w-3xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12 border-b border-gray-700 pb-8">
-          <div className="text-pink-400 text-xs mb-4">$ cat epk.txt</div>
-          <h1 className="text-3xl text-white mb-2">{epkData.bio.name}</h1>
-          <div className="text-gray-400 mb-1">{epkData.bio.realName} · {epkData.bio.pronouns} · {epkData.bio.location}</div>
+          <div className="text-pink-400 text-xs mb-4 print-hide">$ cat epk.txt</div>
+          <h1 className="text-3xl text-white mb-2">{epkData.bio.realName}</h1>
+          <div className="text-gray-400 mb-1">{epkData.bio.pronouns} · {epkData.bio.location} · <a href={`mailto:${epkData.contact.email}`} className="text-gray-400">{epkData.contact.email}</a> · <a href={epkData.contact.website} className="text-gray-400">messier-systems.vercel.app</a> · <a href={epkData.contact.socials.github} className="text-gray-400">github</a> · <a href={epkData.contact.socials.linkedin} className="text-gray-400">linkedin</a></div>
           <div className="text-green-400 text-lg mt-3">&quot;{epkData.bio.oneLiner}&quot;</div>
           <div className="text-gray-400 text-sm mt-1">{epkData.bio.tagline}</div>
         </div>
@@ -121,7 +139,7 @@ export default function EpkContent() {
           </div>
         </section>
 
-        {/* Music */}
+        {/* Music - compact for print */}
         <section className="mb-10">
           <h2 className="text-pink-400 text-sm mb-3">music/</h2>
           <div className="text-xs text-gray-500 mb-3">genres: {epkData.music.genres.join(" · ")}</div>
@@ -130,9 +148,9 @@ export default function EpkContent() {
             {discography.map((release) => (
               <div key={release.title} className="border-l border-gray-700 pl-4">
                 <div className="text-white text-sm">
-                  {release.title} <span className="text-gray-500">: {release.type}, {release.releaseDate}</span>
+                  {release.title} <span className="text-gray-500">: {release.type}, {release.releaseDate}, {release.tracks.length} tracks</span>
                 </div>
-                <div className="text-xs text-gray-500 mt-1 space-y-0.5">
+                <div className="print-hide text-xs text-gray-500 mt-1 space-y-0.5">
                   {release.tracks.map((track, i) => (
                     <div key={i}>
                       {String(i + 1).padStart(2, "0")}. {track.title}{track.duration ? ` (${track.duration})` : ""}
@@ -163,7 +181,6 @@ export default function EpkContent() {
               <div className="text-white">{l.event}</div>
               <div>&quot;{l.piece}&quot; w/ {l.collaborator}</div>
               <div className="text-gray-500 text-xs">{l.description}</div>
-              <div className="text-gray-500 text-xs">tools: {l.tools.join(", ")}</div>
             </div>
           ))}
         </section>
@@ -182,8 +199,8 @@ export default function EpkContent() {
           </div>
         </section>
 
-        {/* Contact */}
-        <section className="mb-10">
+        {/* Contact - hidden in print since it's in the header */}
+        <section className="mb-10 print-hide">
           <h2 className="text-pink-400 text-sm mb-3">contact.txt</h2>
           <div className="border-l border-gray-700 pl-4 text-sm space-y-1">
             <div>email: <a href={`mailto:${epkData.contact.email}`} className="text-pink-400 hover:text-pink-300">{epkData.contact.email}</a></div>
