@@ -33,6 +33,94 @@ export default function EpkContent() {
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{epkData.bio.description}</p>
         </section>
 
+        {/* Experience */}
+        <section className="mb-10">
+          <h2 className="text-pink-400 text-sm mb-3">experience/</h2>
+          <div className="space-y-6">
+            {epkData.experience.map((exp, i) => (
+              <div key={i} className="border-l border-gray-700 pl-4">
+                <div className="text-white text-sm">
+                  {exp.role}
+                  <span className="text-gray-500"> @ {exp.url ? (
+                    <a href={exp.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-400">{exp.company}</a>
+                  ) : exp.company}</span>
+                </div>
+                <div className="text-xs text-gray-500 mb-2">{exp.period} · {exp.location}</div>
+                <div className="space-y-1">
+                  {exp.highlights.map((h, j) => (
+                    <div key={j} className="text-xs text-gray-400 leading-relaxed">· {h}</div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Education */}
+        <section className="mb-10">
+          <h2 className="text-pink-400 text-sm mb-3">education/</h2>
+          <div className="space-y-3">
+            {epkData.education.map((edu, i) => (
+              <div key={i} className="border-l border-gray-700 pl-4">
+                <div className="text-white text-sm">{edu.degree}</div>
+                {edu.focus && <div className="text-xs text-gray-400">focus: {edu.focus}</div>}
+                <div className="text-xs text-gray-500">{edu.institution} · {edu.period} · {edu.location}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Skills */}
+        <section className="mb-10">
+          <h2 className="text-pink-400 text-sm mb-3">skills/</h2>
+          <div className="border-l border-gray-700 pl-4 space-y-3 text-xs">
+            <div>
+              <span className="text-gray-500">core: </span>
+              <span className="text-gray-300">{epkData.skills.core.join(" · ")}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">languages: </span>
+              <span className="text-gray-300">{epkData.skills.languages.join(" · ")}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">frameworks: </span>
+              <span className="text-gray-300">{epkData.skills.frameworks.join(" · ")}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">infrastructure: </span>
+              <span className="text-gray-300">{epkData.skills.infrastructure.join(" · ")}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">tools: </span>
+              <span className="text-gray-300">{epkData.skills.tools.join(" · ")}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">human languages: </span>
+              <span className="text-gray-300">{epkData.skills.humanLanguages.join(" · ")}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Tech Projects */}
+        <section className="mb-10">
+          <h2 className="text-pink-400 text-sm mb-3">projects/</h2>
+          <div className="space-y-4">
+            {epkData.tech.map((t, i) => (
+              <div key={i} className="border-l border-gray-700 pl-4 text-sm">
+                <div>
+                  {t.url ? (
+                    <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-400">{t.project}</a>
+                  ) : (
+                    <span className="text-white">{t.project}</span>
+                  )}
+                  {t.role && <span className="text-gray-500"> : {t.role}</span>}
+                </div>
+                <div className="text-gray-500 text-xs">{t.description}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         {/* Music */}
         <section className="mb-10">
           <h2 className="text-pink-400 text-sm mb-3">music/</h2>
@@ -42,7 +130,7 @@ export default function EpkContent() {
             {discography.map((release) => (
               <div key={release.title} className="border-l border-gray-700 pl-4">
                 <div className="text-white text-sm">
-                  {release.title} <span className="text-gray-500">— {release.type}, {release.releaseDate}</span>
+                  {release.title} <span className="text-gray-500">: {release.type}, {release.releaseDate}</span>
                 </div>
                 <div className="text-xs text-gray-500 mt-1 space-y-0.5">
                   {release.tracks.map((track, i) => (
@@ -80,44 +168,18 @@ export default function EpkContent() {
           ))}
         </section>
 
-        {/* Tech */}
-        <section className="mb-10">
-          <h2 className="text-pink-400 text-sm mb-3">tech/</h2>
-          <div className="space-y-4">
-            {epkData.tech.map((t, i) => (
-              <div key={i} className="border-l border-gray-700 pl-4 text-sm">
-                <div>
-                  {t.url ? (
-                    <a href={t.url} target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-400">{t.project}</a>
-                  ) : (
-                    <span className="text-white">{t.project}</span>
-                  )}
-                  {t.role && <span className="text-gray-500"> — {t.role}</span>}
-                </div>
-                <div className="text-gray-500 text-xs">{t.description}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Writing */}
         <section className="mb-10">
           <h2 className="text-pink-400 text-sm mb-3">writing/</h2>
           <div className="border-l border-gray-700 pl-4 text-sm">
             <div>
               <a href={epkData.writing.substack} target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-400">{epkData.writing.publication}</a>
-              <span className="text-gray-500"> — &quot;{epkData.writing.tagline}&quot;</span>
+              <span className="text-gray-500"> : &quot;{epkData.writing.tagline}&quot;</span>
             </div>
             <div className="text-gray-500 text-xs">form: {epkData.writing.form}</div>
             <div className="text-gray-500 text-xs">themes: {epkData.writing.themes.join(", ")}</div>
             <div className="text-gray-500 text-xs">influences: {epkData.writing.influences.join(", ")}</div>
           </div>
-        </section>
-
-        {/* Press Photos */}
-        <section className="mb-10">
-          <h2 className="text-pink-400 text-sm mb-3">press_photos/</h2>
-          <div className="text-gray-500 text-xs italic border-l border-gray-700 pl-4">[coming soon]</div>
         </section>
 
         {/* Contact */}
