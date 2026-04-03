@@ -20,6 +20,7 @@ import {
   SkipBack,
   ListMusic,
   FileText,
+  ScrollText,
   ChevronRight,
   ExternalLink,
 } from "lucide-react"
@@ -2173,6 +2174,14 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
                 <GlitchIcon icon={FileText} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("/resume")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={ScrollText} size={20} />
               </div>
             </button>
           </div>
