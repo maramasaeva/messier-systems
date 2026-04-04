@@ -7,16 +7,12 @@ async function getAccessToken(): Promise<string | null> {
 
   if (!clientId || !clientSecret || !refreshToken) return null
 
-  const params = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
-    refresh_token: refreshToken,
-    grant_type: 'refresh_token',
-  })
+  const body = `client_id=${clientId}&client_secret=${clientSecret}&refresh_token=${refreshToken}&grant_type=refresh_token`
 
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
-    body: params,
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body,
     cache: 'no-store',
   })
 
