@@ -17,6 +17,7 @@ async function getAccessToken(): Promise<string | null> {
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
     body: params,
+    cache: 'no-store',
   })
 
   if (!res.ok) return null
@@ -29,10 +30,10 @@ export async function fetchStravaActivity(): Promise<ActivityItem[]> {
   if (!token) return []
 
   const res = await fetch(
-    'https://www.strava.com/api/v3/athlete/activities?per_page=15',
+    'https://www.strava.com/api/v3/athlete/activities?per_page=30',
     {
       headers: { 'Authorization': `Bearer ${token}` },
-      next: { revalidate: 7200 },
+      cache: 'no-store',
     }
   )
 
