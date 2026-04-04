@@ -25,11 +25,11 @@ export async function GET(req: NextRequest) {
     }),
   })
 
-  if (!res.ok) {
-    return NextResponse.json({ error: 'Token exchange failed' }, { status: 502 })
-  }
-
   const data = await res.json()
+
+  if (!res.ok) {
+    return NextResponse.json({ error: 'Token exchange failed', detail: data }, { status: 502 })
+  }
 
   // Display the refresh token for the user to save as env var
   return new NextResponse(
