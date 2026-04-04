@@ -23,9 +23,11 @@ import {
   ScrollText,
   ChevronRight,
   ExternalLink,
+  Activity,
 } from "lucide-react"
 import { discography, streamingLinks } from './data/discography'
 import { epkData } from './data/epk'
+import ActivityWindowContent from './components/activity-window'
 import SpotifyWebApi from 'spotify-web-api-js';
 import { spotifyApi, getSpotifyLoginUrl } from './utils/spotifyAuth'
 
@@ -78,7 +80,7 @@ interface Window {
 
 interface WindowData {
   id: string
-  type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk"
+  type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk" | "activity"
   title: string
   position: { x: number; y: number }
   zIndex: number
@@ -1172,6 +1174,8 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
         return <WritingWindowContent />
       case "epk":
         return <EpkWindowContent />
+      case "activity":
+        return <ActivityWindowContent />
     }
   }
 
@@ -1800,7 +1804,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
     return () => clearInterval(glitchInterval)
   }, [isAsciiComplete])
 
-  const openWindow = (type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk") => {
+  const openWindow = (type: "about" | "work" | "contact" | "music" | "tools" | "writing" | "epk" | "activity") => {
     const windowExists = windows.find((w) => w.type === type)
     if (windowExists) {
       // Focus existing window
@@ -1816,6 +1820,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       tools: "messier@terminal: ~/tools_and_skills",
       writing: "messier@terminal: ~/messinecessity",
       epk: "messier@terminal: ~/epk",
+      activity: "messier@terminal: ~/proc/activity_monitor",
     }
 
     const newWindow: WindowData = {
@@ -2174,6 +2179,14 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
                 <GlitchIcon icon={FileText} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => openWindow("activity")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={Activity} size={20} />
               </div>
             </button>
             <button

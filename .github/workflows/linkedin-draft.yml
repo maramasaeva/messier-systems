@@ -1,0 +1,29 @@
+name: Weekly LinkedIn Draft
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
+  workflow_dispatch:       # Manual trigger
+
+jobs:
+  generate-draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate LinkedIn draft
+        env:
+          SITE_URL: https://messier-systems.vercel.app
+        run: node scripts/linkedin-draft.js
+
+      - name: Commit draft
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/linkedin-draft.json
+          git diff --staged --quiet || git commit -m "chore: weekly linkedin draft $(date +%Y-%m-%d)"
+          git push
