@@ -14,15 +14,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Strava not configured' }, { status: 500 })
   }
 
+  const params = new URLSearchParams({
+    client_id: clientId,
+    client_secret: clientSecret,
+    code,
+    grant_type: 'authorization_code',
+  })
+
   const res = await fetch('https://www.strava.com/oauth/token', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: clientId,
-      client_secret: clientSecret,
-      code,
-      grant_type: 'authorization_code',
-    }),
+    body: params,
   })
 
   const data = await res.json()
