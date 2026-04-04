@@ -42,27 +42,39 @@ export async function fetchStravaActivity(): Promise<ActivityItem[]> {
   const items: ActivityItem[] = []
 
   for (const activity of activities) {
-    if (activity.type !== 'Run' && activity.type !== 'Walk' && activity.type !== 'Hike') continue
+    const type = activity.type
 
-    const km = (activity.distance / 1000).toFixed(1)
-    const mins = Math.floor(activity.moving_time / 60)
-    const secs = activity.moving_time % 60
-    const time = `${mins}:${secs.toString().padStart(2, '0')}`
-    const type = activity.type.toLowerCase()
+    if (type === 'Run' || type === 'Walk' || type === 'Hike') {
+      const km = (activity.distance / 1000).toFixed(1)
+      const mins = Math.floor(activity.moving_time / 60)
+      const secs = activity.moving_time % 60
+      const time = `${mins}:${secs.toString().padStart(2, '0')}`
+      const verb = type === 'Run' ? 'ran' : type === 'Walk' ? 'walked' : 'hiked'
 
-    items.push({
-      id: `strava-${activity.id}`,
-      source: 'strava',
-      type,
-      title: `${type === 'run' ? 'ran' : type === 'walk' ? 'walked' : 'hiked'} ${km}km in ${time}`,
-      timestamp: activity.start_date,
-      url: `https://www.strava.com/activities/${activity.id}`,
-      metadata: {
-        distance: activity.distance,
-        movingTime: activity.moving_time,
-        elevationGain: activity.total_elevation_gain || 0,
-      },
-    })
+      items.push({
+        id: `strava-${activity.id}`,
+        source: 'strava',
+        type: type.toLowerCase(),
+        title: `${verb} ${km}km in ${time}`,
+        timestamp: activity.start_date,
+        url: `https://www.strava.com/activities/${activity.id}`,
+        metadata: {
+          distance: activity.distance,
+          movingTime: activity.moving_time,
+          elevationGain: activity.total_elevation_gain || 0,
+        },
+      })
+    } else if (type === 'WeightTraining' || type === 'Workout') {
+      const mins = Math.floor(activity.moving_time / 60)
+      items.push({
+        id: `strava-${activity.id}`,
+        source: 'strava',
+        type: 'training',
+        title: `trained for ${mins}min`,
+        timestamp: activity.start_date,
+        url: `https://www.strava.com/activities/${activity.id}`,
+      })
+    }
   }
 
   return items

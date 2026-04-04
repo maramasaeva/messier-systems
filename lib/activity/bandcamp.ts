@@ -1,42 +1,28 @@
 import { ActivityItem } from './types'
+import { discography } from '@/data/discography'
+
+const BANDCAMP_URL = 'https://mmessier.bandcamp.com'
 
 export async function fetchBandcampActivity(): Promise<ActivityItem[]> {
-  try {
-    const res = await fetch('https://mmessier.bandcamp.com/feed', {
-      headers: { 'User-Agent': 'messier-systems/1.0' },
-      next: { revalidate: 21600 }, // 6 hours — releases are rare
+  const items: ActivityItem[] = []
+
+  for (const release of discography) {
+    const url = release.links.bandcamp || `${BANDCAMP_URL}`
+    const date = new Date(release.releaseDate)
+    // If the date is invalid (e.g. just "2025"), use Jan 1 of that year
+    const timestamp = isNaN(date.getTime())
+      ? new Date(`${release.releaseDate}-01-01`).toISOString()
+      : date.toISOString()
+
+    items.push({
+      id: `bandcamp-${release.title}`,
+      source: 'bandcamp',
+      type: 'release',
+      title: `released "${release.title}" ${release.type}`,
+      timestamp,
+      url,
     })
-
-    if (!res.ok) return []
-
-    const xml = await res.text()
-    const items: ActivityItem[] = []
-    const itemRegex = /<item>([\s\S]*?)<\/item>/g
-    let match
-
-    while ((match = itemRegex.exec(xml)) !== null) {
-      const itemXml = match[1]
-      const title =
-        itemXml.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/)?.[1] ||
-        itemXml.match(/<title>(.*?)<\/title>/)?.[1] ||
-        ''
-      const link = itemXml.match(/<link>(.*?)<\/link>/)?.[1] || ''
-      const pubDate = itemXml.match(/<pubDate>(.*?)<\/pubDate>/)?.[1] || ''
-
-      if (title) {
-        items.push({
-          id: `bandcamp-${link}`,
-          source: 'bandcamp',
-          type: 'release',
-          title: `released "${title.toLowerCase()}"`,
-          timestamp: pubDate ? new Date(pubDate).toISOString() : new Date().toISOString(),
-          url: link,
-        })
-      }
-    }
-
-    return items
-  } catch {
-    return []
   }
+
+  return items
 }
