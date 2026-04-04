@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-04-04T12:50:23.323Z",
+  "weekOf": "2026-03-28",
+  "post": "25km running this week, including a 15km. 3 runs, 2 gym sessions.\n\n[WORK: 46 contributions this week — describe what you built in terms of impact, not product names. e.g. \"built AI tools that help people X, automate Y, and Z. the kind of systems where you remove hours of manual work and replace it with something that actually adapts to context.\"]\n\nworked on messier-systems, riceball-pico, maramasaeva. started mcp-server-starter, kuleuven-booking-bot. wrote 3 notes this week.\n\nmessier-systems.vercel.app",
+  "itemCount": 21,
+  "sources": [
+    "github",
+    "gitlab",
+    "obsidian",
+    "strava"
+  ]
+}

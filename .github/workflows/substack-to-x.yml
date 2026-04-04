@@ -1,9 +1,7 @@
 name: Post Substack to X
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'  # Check every 15 minutes
-  workflow_dispatch:         # Manual trigger for testing
+  workflow_dispatch:         # Manual trigger only — disabled auto-schedule (X API secrets not configured)
 
 jobs:
   check-and-post:
