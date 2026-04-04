@@ -10,6 +10,10 @@ export async function GET() {
     STRAVA_CLIENT_SECRET: !!clientSecret && clientSecret.length > 0,
     STRAVA_REFRESH_TOKEN: !!refreshToken && refreshToken.length > 0,
     clientIdPrefix: clientId?.slice(0, 4) || 'missing',
+    clientIdLen: clientId?.length,
+    secretLen: clientSecret?.length,
+    refreshLen: refreshToken?.length,
+    clientIdJson: JSON.stringify(clientId),
   }
 
   if (!clientId || !clientSecret || !refreshToken) {
