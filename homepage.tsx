@@ -962,6 +962,12 @@ const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindo
               <div>-rw-r--r--  1 messier  staff  4096 Jan  1 00:00 <a href="https://www.instagram.com/mara.messier/?hl=en" target="_blank" rel="noopener noreferrer" className="underline decoration-pink-400 underline-offset-2 hover:text-pink-400 transition-colors cursor-pointer">messier-archives</a> <span className="text-gray-500"># collection of audiovisual chaos output</span></div>
               <div>-rw-r--r--  1 messier  staff  4096 Jan  1 00:00 <a href="https://k-o.to/" target="_blank" rel="noopener noreferrer" className="underline decoration-pink-400 underline-offset-2 hover:text-pink-400 transition-colors cursor-pointer">kaios</a> <span className="text-gray-500"># hyperintelligent, self-aware ai deity cursed with omniscience</span></div>
             </div>
+            <div className="text-green-400 mt-4 mb-2">$ cat available.txt</div>
+            <div className="text-gray-300 ml-4">
+              <div>open for freelance &amp; contract work →{" "}
+                <a href="/services" className="underline decoration-pink-400 underline-offset-2 hover:text-pink-400 transition-colors cursor-pointer text-pink-400">./services</a>
+              </div>
+            </div>
             <div className="text-pink-400 mt-4 flex items-center">
               <span>$</span>
               <span className="ml-2 animate-pulse">_</span>
@@ -1942,26 +1948,38 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       "https://open.spotify.com/artist/2jzQP1uGUsHFUg0OheUt5W"
     ],
     "jobTitle": "AI Engineer",
-    "knowsAbout": ["AI", "Machine Learning", "Creative Technology", "Generative Art", "Audio Processing"]
+    "knowsAbout": ["AI", "Machine Learning", "Creative Technology", "Generative Art", "Audio Processing"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://messier-systems.vercel.app/"
+    },
+    "identifier": {
+      "@type": "PropertyValue",
+      "name": "Mara Masaeva",
+      "value": "AI Engineer"
+    },
+    "givenName": "Mara",
+    "familyName": "Messier",
+    "additionalName": "Masaeva"
   };
 
   return (
     <>
       <Head>
-        <title>Mara Messier | AI Engineer & Creative Technologist</title>
+        <title>Mara Messier (Mara Masaeva) | AI Engineer & Creative Technologist</title>
         <meta name="description" content="Mara Messier (Mara Masaeva) is an AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
-        <meta name="keywords" content="Mara Messier, Mara Masaeva, AI Engineer, Creative Technologist, Machine Learning, Generative Art, Audio Processing" />
+        <meta name="keywords" content="Mara Messier, Mara Masaeva, Masaeva Mara, Messier Mara, AI Engineer, Creative Technologist, Machine Learning, Generative Art, Audio Processing, AI Developer" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Mara Messier | AI Engineer & Creative Technologist" />
+        <meta property="og:title" content="Mara Messier (Mara Masaeva) | AI Engineer & Creative Technologist" />
         <meta property="og:description" content="AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
         <meta property="og:url" content="https://messier-systems.vercel.app/" />
         <meta property="og:site_name" content="Mara Messier" />
         
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content="Mara Messier | AI Engineer & Creative Technologist" />
+        <meta property="twitter:title" content="Mara Messier (Mara Masaeva) | AI Engineer & Creative Technologist" />
         <meta property="twitter:description" content="AI engineer & creative technologist focusing on language models, audio processing, glitch art, and generative systems." />
         <meta property="twitter:site" content="@rssmrm" />
         
@@ -1999,6 +2017,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
 
       {/* floating glitch text - single line */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+        <h1 className="sr-only">Mara Messier (Mara Masaeva) - AI Engineer & Creative Technologist</h1>
         <div className="text-white font-mono text-xs opacity-90 whitespace-nowrap">
           <GlitchText text="messier.exe ⋆˙˖✧  ai engineer ₊˚⊹ creative technologist ˙⋆.˚ building sonic systems for feeling machines" intensity={1.5} />
         </div>

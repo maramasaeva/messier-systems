@@ -29,7 +29,7 @@ const nextConfig = {
       {
         source: '/work',
         destination: '/',
-        permanent: true,
+        permanent: false,
       },
     ]
   },
