@@ -22,6 +22,7 @@ export default function ScGeneratorDemo() {
   const synthRef = useRef<{ stop: () => void; updateMotion: (d: MotionData) => void } | null>(null)
   const motionRef = useRef<{ stop: () => void } | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const userStoppedRef = useRef(false)
 
   // Initialize camera on mount
   useEffect(() => {
@@ -77,7 +78,7 @@ export default function ScGeneratorDemo() {
 
   // Start audio when code typewriter completes
   useEffect(() => {
-    if (stage !== "complete" || emotions.length === 0 || isPlaying) return
+    if (stage !== "complete" || emotions.length === 0 || isPlaying || userStoppedRef.current) return
 
     async function startAudio() {
       const { playSynthesis } = await import("@/lib/sc-synth")
@@ -92,6 +93,7 @@ export default function ScGeneratorDemo() {
   }, [stage, emotions, isPlaying])
 
   const handleStop = useCallback(() => {
+    userStoppedRef.current = true
     synthRef.current?.stop()
     synthRef.current = null
     setIsPlaying(false)
@@ -101,8 +103,9 @@ export default function ScGeneratorDemo() {
   const handleGenerate = async () => {
     if (!text.trim()) return
 
-    // Stop previous audio
+    // Stop previous audio and reset user-stopped flag
     handleStop()
+    userStoppedRef.current = false
 
     setStage("analyzing")
     setEmotions([])
