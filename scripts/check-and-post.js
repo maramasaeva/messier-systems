@@ -20,7 +20,10 @@ async function main() {
   // Fetch RSS feed
   console.log("Fetching Substack RSS feed...");
   const res = await fetch(FEED_URL, {
-    headers: { "User-Agent": "messier-systems/1.0 (substack-to-x bot)" },
+    headers: {
+      "User-Agent": "Mozilla/5.0 (compatible; messier-systems/1.0)",
+      "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    },
   });
   if (!res.ok) {
     console.error(`Failed to fetch feed: ${res.status}`);
