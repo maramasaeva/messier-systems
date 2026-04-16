@@ -2156,6 +2156,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             <span className="text-gray-600 mr-1">~/</span>
             {[
               { href: "/projects", label: "projects" },
+              { href: "/demos", label: "demos" },
               { href: "/blog", label: "blog" },
               { href: "/resume", label: "resume" },
               { href: "/uses", label: "uses" },
