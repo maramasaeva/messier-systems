@@ -23,9 +23,6 @@ import {
   ChevronRight,
   ExternalLink,
   Activity,
-  FolderOpen,
-  PenLine,
-  Cpu,
 } from "lucide-react"
 import { discography, streamingLinks } from './data/discography'
 import { epkData } from './data/epk'
@@ -2152,38 +2149,28 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
                 <GlitchIcon icon={Activity} size={20} />
               </div>
             </button>
-            <button
-              onClick={() => handleExternalLink("/resume")}
-              className="text-gray-300 hover:text-pink-400 transition-colors group"
-            >
-              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-                <GlitchIcon icon={ScrollText} size={20} />
-              </div>
-            </button>
-            <button
-              onClick={() => handleExternalLink("/projects")}
-              className="text-gray-300 hover:text-pink-400 transition-colors group"
-            >
-              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-                <GlitchIcon icon={FolderOpen} size={20} />
-              </div>
-            </button>
-            <button
-              onClick={() => handleExternalLink("/blog")}
-              className="text-gray-300 hover:text-pink-400 transition-colors group"
-            >
-              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-                <GlitchIcon icon={PenLine} size={20} />
-              </div>
-            </button>
-            <button
-              onClick={() => handleExternalLink("/uses")}
-              className="text-gray-300 hover:text-pink-400 transition-colors group"
-            >
-              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
-                <GlitchIcon icon={Cpu} size={20} />
-              </div>
-            </button>
+          </div>
+
+          {/* page navigation strip - labeled terminal paths above the icon bar */}
+          <div className="absolute bottom-[52px] left-8 flex items-center space-x-1 font-mono text-[11px] tracking-wide">
+            <span className="text-gray-600 mr-1">~/</span>
+            {[
+              { href: "/projects", label: "projects" },
+              { href: "/blog", label: "blog" },
+              { href: "/resume", label: "resume" },
+              { href: "/uses", label: "uses" },
+            ].map((link, i) => (
+              <span key={link.href} className="flex items-center">
+                {i > 0 && <span className="text-gray-700 mx-1">/</span>}
+                <a
+                  href={link.href}
+                  className="text-[#c8f060] hover:text-pink-400 transition-colors no-underline border-b border-transparent hover:border-pink-400/50"
+                  style={{ textDecoration: "none" }}
+                >
+                  {link.label}
+                </a>
+              </span>
+            ))}
           </div>
 
           {/* bottom right external links - lowered position */}

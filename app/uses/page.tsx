@@ -53,6 +53,7 @@ export default function UsesPage() {
         fontFamily: "'DM Mono', 'Courier New', monospace",
       }}
     >
+      <style>{`@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } } .cursor { display: inline-block; animation: blink 1s step-end infinite; }`}</style>
       {/* nav */}
       <nav
         style={{
@@ -113,7 +114,7 @@ export default function UsesPage() {
             fontFamily: "'DM Mono', monospace",
           }}
         >
-          uses
+          uses<span className="cursor" style={{ color: "#c8f060", marginLeft: "4px" }}>_</span>
         </h1>
         <p style={{ marginTop: "1rem", fontSize: "1rem", lineHeight: 1.8, color: "#888880", maxWidth: "600px" }}>
           the tools, languages, and systems i work with. updated as my stack evolves.
