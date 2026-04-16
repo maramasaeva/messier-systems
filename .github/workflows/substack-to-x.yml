@@ -1,7 +1,9 @@
 name: Post Substack to X
 
 on:
-  workflow_dispatch:         # Manual trigger only — disabled auto-schedule (X API secrets not configured)
+  schedule:
+    - cron: '0 10 * * *'   # Daily at 10am UTC — requires X API secrets to be configured
+  workflow_dispatch:         # Also keep manual trigger
 
 jobs:
   check-and-post:

@@ -1,7 +1,9 @@
 name: Weekly LinkedIn Draft
 
 on:
-  workflow_dispatch:       # Manual trigger only — auto-schedule disabled
+  schedule:
+    - cron: '0 9 * * 1'   # Every Monday at 9am UTC
+  workflow_dispatch:       # Also keep manual trigger
 
 jobs:
   generate-draft:
