@@ -1933,7 +1933,6 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
 
   return (
     <>
-      <style>{`@font-face { font-family: 'MS Mincho'; src: url('/fonts/MSMINCHO.TTF') format('truetype'); font-weight: normal; font-style: normal; font-display: swap; }`}</style>
       <div className="min-h-screen h-screen max-h-screen bg-black relative overflow-hidden border-2 border-gray-800 shadow-2xl shadow-pink-500/10 flex flex-col">
         {/* Static video overlay */}
       <div className="absolute inset-0 z-50 pointer-events-none overflow-hidden">
@@ -1960,7 +1959,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
       {/* floating glitch text - single line */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
         <h1 className="sr-only">Mara Messier (Mara Masaeva) - AI Engineer & Creative Technologist</h1>
-        <div className="text-white text-xs opacity-90 whitespace-nowrap" style={{ fontFamily: "'MS Mincho', serif" }}>
+        <div className="text-white font-mono text-xs opacity-90 whitespace-nowrap">
           <GlitchText text="messier.exe ⋆˙˖✧  ai engineer ₊˚⊹ creative technologist ˙⋆.˚ building sonic systems for feeling machines" intensity={1.5} />
         </div>
       </div>
@@ -1992,7 +1991,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             <div className="flex items-start">
               <span className="text-pink-400 mr-2"><GlitchText text="messier@terminal:~$" intensity={2} /></span>
               <div className="flex-1">
-                <div className="text-green-400 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: "'MS Mincho', serif" }}>
+                <div className="text-green-400 whitespace-pre-wrap leading-relaxed">
                   {isTypingComplete ? (
                     <GlitchText text={typedText} intensity={0.8} />
                   ) : (
