@@ -2,23 +2,39 @@ import type { Metadata } from "next"
 import EpkContent from "./epk-content"
 
 export const metadata: Metadata = {
-  title: "messier — electronic press kit",
+  title: "messier — Electronic Press Kit | AI Engineer & Music Producer",
   description:
-    "electronic press kit for messier (mara masaeva). ai engineer, music producer, writer. building sonic systems for feeling machines.",
+    "Electronic press kit for messier (Mara Masaeva). AI engineer, electronic music producer, and writer. IDM, ambient, jungle, noise, spoken word. Leuven, Belgium.",
+  keywords: [
+    "messier",
+    "Mara Masaeva",
+    "electronic press kit",
+    "EPK",
+    "electronic music",
+    "IDM",
+    "ambient",
+    "music producer Belgium",
+    "AI engineer music",
+    "creative technologist",
+  ],
   openGraph: {
-    title: "messier — electronic press kit",
+    title: "messier — Electronic Press Kit",
     description:
-      "ai engineer + music producer + writer. building sonic systems for feeling machines.",
+      "AI engineer + electronic music producer + writer. IDM, ambient, jungle, noise, spoken word. Building sonic systems for feeling machines.",
     url: "https://messier-systems.vercel.app/epk",
     siteName: "messier systems",
     type: "profile",
   },
   twitter: {
-    card: "summary",
-    title: "messier — electronic press kit",
+    card: "summary_large_image",
+    title: "messier — Electronic Press Kit",
     description:
-      "ai engineer + music producer + writer. building sonic systems for feeling machines.",
+      "AI engineer + electronic music producer + writer. IDM, ambient, jungle, noise, spoken word.",
     site: "@rssmrm",
+    creator: "@rssmrm",
+  },
+  alternates: {
+    canonical: "https://messier-systems.vercel.app/epk",
   },
 }
 
