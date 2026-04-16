@@ -20,34 +20,24 @@ export default function ScGeneratorDemo() {
   const [motionData, setMotionData] = useState<MotionData | null>(null)
 
   const synthRef = useRef<{ stop: () => void; updateMotion: (d: MotionData) => void } | null>(null)
-  const motionRef = useRef<{ stop: () => void; getVideoElement: () => HTMLVideoElement } | null>(null)
-  const videoContainerRef = useRef<HTMLDivElement>(null)
+  const motionRef = useRef<{ stop: () => void } | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // Initialize camera on mount
   useEffect(() => {
     let mounted = true
 
     async function initCamera() {
+      if (!videoRef.current) return
       try {
         const { createMotionTracker } = await import("@/lib/sc-motion")
         const tracker = await createMotionTracker()
-        await tracker.start()
+        await tracker.start(videoRef.current)
         if (!mounted) {
           tracker.stop()
           return
         }
         motionRef.current = tracker
-
-        // Attach video element
-        const videoEl = tracker.getVideoElement()
-        videoEl.style.width = "100%"
-        videoEl.style.height = "100%"
-        videoEl.style.objectFit = "cover"
-        videoEl.style.borderRadius = "0"
-        if (videoContainerRef.current) {
-          videoContainerRef.current.innerHTML = ""
-          videoContainerRef.current.appendChild(videoEl)
-        }
 
         tracker.onFrame((data) => {
           setMotionData(data)
@@ -195,26 +185,37 @@ export default function ScGeneratorDemo() {
           overflow: "hidden",
         }}
       >
-        {cameraActive ? (
-          <>
-            <div ref={videoContainerRef} style={{ width: "100%", height: "100%" }} />
-            <div
-              style={{
-                position: "absolute",
-                bottom: "4px",
-                left: "4px",
-                fontSize: "9px",
-                color: "#c8f060",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                background: "#0a0a08cc",
-                padding: "2px 4px",
-              }}
-            >
-              tracking
-            </div>
-          </>
-        ) : (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            transform: "scaleX(-1)",
+            display: cameraActive ? "block" : "none",
+          }}
+        />
+        {cameraActive && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "4px",
+              left: "4px",
+              fontSize: "9px",
+              color: "#c8f060",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              background: "#0a0a08cc",
+              padding: "2px 4px",
+            }}
+          >
+            tracking
+          </div>
+        )}
+        {!cameraActive && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", padding: "8px" }}>
             <span style={{ fontSize: "9px", color: "#555550", textAlign: "center", lineHeight: 1.5 }}>
               {cameraError ? "camera unavailable — audio still works" : "requesting camera..."}
@@ -224,7 +225,7 @@ export default function ScGeneratorDemo() {
       </div>
 
       {/* Motion data overlay */}
-      {cameraActive && motionData && isPlaying && (
+      {cameraActive && motionData && (
         <div
           style={{
             position: "fixed",

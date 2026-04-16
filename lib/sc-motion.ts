@@ -2,10 +2,9 @@ import type { MotionData } from "@/types/sc-generator"
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
 interface MotionTracker {
-  start: () => Promise<void>
+  start: (videoEl: HTMLVideoElement) => Promise<void>
   stop: () => void
   onFrame: (callback: (data: MotionData) => void) => void
-  getVideoElement: () => HTMLVideoElement
   isActive: () => boolean
 }
 
@@ -16,12 +15,7 @@ export async function createMotionTracker(): Promise<MotionTracker> {
   let active = false
   let frameCallback: ((data: MotionData) => void) | null = null
   let prevLandmarks: number[][] | null = null
-
-  const video = document.createElement("video")
-  video.setAttribute("playsinline", "")
-  video.setAttribute("autoplay", "")
-  video.muted = true
-  video.style.transform = "scaleX(-1)" // mirror
+  let videoEl: HTMLVideoElement | null = null
 
   async function initHandLandmarker() {
     const vision = await FilesetResolver.forVisionTasks(
@@ -41,9 +35,7 @@ export async function createMotionTracker(): Promise<MotionTracker> {
     })
   }
 
-  function extractMotionData(
-    landmarks: number[][]
-  ): MotionData {
+  function extractMotionData(landmarks: number[][]): MotionData {
     if (landmarks.length === 0) {
       return {
         movementIntensity: 0,
@@ -53,7 +45,6 @@ export async function createMotionTracker(): Promise<MotionTracker> {
       }
     }
 
-    // Average position of all landmarks
     let avgX = 0
     let avgY = 0
     let minX = 1
@@ -72,7 +63,6 @@ export async function createMotionTracker(): Promise<MotionTracker> {
     avgX /= landmarks.length
     avgY /= landmarks.length
 
-    // Movement intensity: compare to previous frame
     let movementIntensity = 0
     if (prevLandmarks && prevLandmarks.length === landmarks.length) {
       let totalDelta = 0
@@ -81,29 +71,24 @@ export async function createMotionTracker(): Promise<MotionTracker> {
         const dy = landmarks[i][1] - prevLandmarks[i][1]
         totalDelta += Math.sqrt(dx * dx + dy * dy)
       }
-      movementIntensity = Math.min(totalDelta / landmarks.length * 15, 1)
+      movementIntensity = Math.min((totalDelta / landmarks.length) * 15, 1)
     }
     prevLandmarks = landmarks
 
-    // Horizontal: -1 (right of screen / left hand side mirrored) to 1
     const horizontalPosition = (avgX - 0.5) * -2
-
-    // Vertical: 0 (bottom) to 1 (top)
     const verticalPosition = 1 - avgY
-
-    // Spread: how far apart hands/fingers are
     const spread = Math.min(Math.max(maxX - minX, maxY - minY) * 2, 1)
 
     return { movementIntensity, horizontalPosition, verticalPosition, spread }
   }
 
   function processFrame() {
-    if (!active || !handLandmarker || !video.videoWidth) {
+    if (!active || !handLandmarker || !videoEl || !videoEl.videoWidth) {
       if (active) animFrame = requestAnimationFrame(processFrame)
       return
     }
 
-    const result = handLandmarker.detectForVideo(video, performance.now())
+    const result = handLandmarker.detectForVideo(videoEl, performance.now())
     const allLandmarks: number[][] = []
 
     if (result.landmarks) {
@@ -121,7 +106,8 @@ export async function createMotionTracker(): Promise<MotionTracker> {
   }
 
   return {
-    start: async () => {
+    start: async (video: HTMLVideoElement) => {
+      videoEl = video
       try {
         stream = await navigator.mediaDevices.getUserMedia({
           video: { width: 320, height: 240, facingMode: "user" },
@@ -143,14 +129,13 @@ export async function createMotionTracker(): Promise<MotionTracker> {
         stream.getTracks().forEach((t) => t.stop())
         stream = null
       }
-      video.srcObject = null
+      if (videoEl) videoEl.srcObject = null
       handLandmarker?.close()
       handLandmarker = null
     },
     onFrame: (callback) => {
       frameCallback = callback
     },
-    getVideoElement: () => video,
     isActive: () => active,
   }
 }
