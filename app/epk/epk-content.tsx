@@ -35,6 +35,19 @@ export default function EpkContent() {
         }
       `}</style>
 
+      {/* Navigation */}
+      <nav className="no-print border-b border-gray-800 px-6 py-3 flex justify-between items-center">
+        <a href="/" className="text-green-400 text-xs tracking-widest uppercase no-underline hover:text-pink-400 transition-colors">
+          ← messier.exe
+        </a>
+        <div className="flex gap-6">
+          <a href="/projects" className="text-gray-500 text-xs tracking-wider uppercase no-underline hover:text-pink-400 transition-colors">projects</a>
+          <a href="/blog" className="text-gray-500 text-xs tracking-wider uppercase no-underline hover:text-pink-400 transition-colors">blog</a>
+          <a href="/resume" className="text-gray-500 text-xs tracking-wider uppercase no-underline hover:text-pink-400 transition-colors">resume</a>
+          <a href="/uses" className="text-gray-500 text-xs tracking-wider uppercase no-underline hover:text-pink-400 transition-colors">uses</a>
+        </div>
+      </nav>
+
       <div className="max-w-3xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12 border-b border-gray-700 pb-8">

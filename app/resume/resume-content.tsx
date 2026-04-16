@@ -17,6 +17,17 @@ export default function ResumeContent() {
         }
       `}</style>
 
+      {/* Navigation - hidden in print */}
+      <div className="no-print" style={{ maxWidth: "750px", margin: "0 auto", padding: "12px 50px 0", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "monospace", fontSize: "11px" }}>
+        <a href="/" style={{ color: "#888", textDecoration: "none", letterSpacing: "0.1em" }}>← messier.exe</a>
+        <div style={{ display: "flex", gap: "20px" }}>
+          <a href="/projects" style={{ color: "#888", textDecoration: "none" }}>projects</a>
+          <a href="/blog" style={{ color: "#888", textDecoration: "none" }}>blog</a>
+          <a href="/epk" style={{ color: "#888", textDecoration: "none" }}>epk</a>
+          <a href="/uses" style={{ color: "#888", textDecoration: "none" }}>uses</a>
+        </div>
+      </div>
+
       <div className="resume-page text-[9pt] leading-[1.4]">
         {/* Header */}
         <div className="text-center border-b border-black pb-2 mb-3">

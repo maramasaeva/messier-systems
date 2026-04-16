@@ -221,6 +221,9 @@ export default function ThinkContent() {
           ← messier.exe
         </a>
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+          <a href="/projects" className="nav-link">projects</a>
+          <a href="/blog" className="nav-link">blog</a>
+          <a href="/uses" className="nav-link">uses</a>
           <button className={`lang-btn${lang === "en" ? " active" : ""}`} onClick={() => setLang("en")}>en</button>
           <button className={`lang-btn${lang === "nl" ? " active" : ""}`} onClick={() => setLang("nl")}>nl</button>
           <a href="mailto:maramasaeva@gmail.com" className="nav-link" style={{ marginLeft: "1rem" }}>contact</a>

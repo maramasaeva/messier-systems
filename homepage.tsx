@@ -23,6 +23,9 @@ import {
   ChevronRight,
   ExternalLink,
   Activity,
+  FolderOpen,
+  PenLine,
+  Cpu,
 } from "lucide-react"
 import { discography, streamingLinks } from './data/discography'
 import { epkData } from './data/epk'
@@ -2155,6 +2158,30 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
                 <GlitchIcon icon={ScrollText} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("/projects")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={FolderOpen} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("/blog")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={PenLine} size={20} />
+              </div>
+            </button>
+            <button
+              onClick={() => handleExternalLink("/uses")}
+              className="text-gray-300 hover:text-pink-400 transition-colors group"
+            >
+              <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
+                <GlitchIcon icon={Cpu} size={20} />
               </div>
             </button>
           </div>
