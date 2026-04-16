@@ -7,6 +7,9 @@ interface VoiceNodes {
   panner: StereoPannerNode
   lfo: OscillatorNode
   lfoGain: GainNode
+  baseFilterFreq: number
+  baseAmplitude: number
+  basePan: number
 }
 
 interface SynthInstance {
@@ -57,9 +60,9 @@ export function playSynthesis(
   const ctx = new AudioContext()
   const now = ctx.currentTime
 
-  // Master chain: soft clipper → analyser → destination
+  // Master chain
   const masterGain = ctx.createGain()
-  masterGain.gain.value = 0.6
+  masterGain.gain.value = 0.5
 
   const clipper = ctx.createWaveShaper()
   clipper.curve = createSoftClipCurve(4096)
@@ -73,40 +76,38 @@ export function playSynthesis(
   clipper.connect(analyser)
   analyser.connect(ctx.destination)
 
-  // Shared reverb convolver
+  // Reverb
   const convolver = ctx.createConvolver()
-  const maxDecay = Math.max(...emotions.map((e) => e.synthParams.reverbDecay))
+  const maxDecay = Math.max(...emotions.map((e) => e.synthParams.reverbDecay), 1)
   convolver.buffer = createImpulseResponse(ctx, Math.min(maxDecay + 0.5, 4), maxDecay * 0.6)
 
   const reverbGain = ctx.createGain()
-  reverbGain.gain.value = 0.3
+  reverbGain.gain.value = 0.35
   convolver.connect(reverbGain)
   reverbGain.connect(masterGain)
 
   const dryGain = ctx.createGain()
-  dryGain.gain.value = 0.7
+  dryGain.gain.value = 0.65
   dryGain.connect(masterGain)
 
   const voices: VoiceNodes[] = []
-  const totalDuration = 14
 
   emotions.forEach((emotion, i) => {
     const p = emotion.synthParams
-    const startOffset = i * 0.2
-    const startTime = now + startOffset
+    const startTime = now + i * 0.3
 
-    // Create source
+    // Source — runs indefinitely (no stop time)
     let source: OscillatorNode | AudioBufferSourceNode
     if (p.waveform === "noise") {
       const bufferSource = ctx.createBufferSource()
-      bufferSource.buffer = createNoiseBuffer(ctx, totalDuration + 2)
+      bufferSource.buffer = createNoiseBuffer(ctx, 10)
       bufferSource.loop = true
       source = bufferSource
     } else {
       const osc = ctx.createOscillator()
       osc.type = p.waveform
       osc.frequency.value = p.frequency
-      osc.detune.value = p.detune + i * 3
+      osc.detune.value = p.detune + i * 5
       source = osc
     }
 
@@ -114,36 +115,28 @@ export function playSynthesis(
     const filter = ctx.createBiquadFilter()
     filter.type = "lowpass"
     filter.frequency.value = p.filterFreq
-    filter.Q.value = p.filterQ
+    filter.Q.value = Math.min(p.filterQ, 12)
 
-    // LFO → filter frequency
+    // LFO → filter frequency modulation
     const lfo = ctx.createOscillator()
     lfo.type = "sine"
     lfo.frequency.value = p.lfoRate
     const lfoGain = ctx.createGain()
-    lfoGain.gain.value = p.filterFreq * p.lfoDepth * 0.5
+    lfoGain.gain.value = p.filterFreq * p.lfoDepth * 0.3
     lfo.connect(lfoGain)
     lfoGain.connect(filter.frequency)
 
-    // Gain (ADSR envelope)
+    // Gain — fade in, then sustain indefinitely
     const gain = ctx.createGain()
     gain.gain.setValueAtTime(0, startTime)
-    gain.gain.linearRampToValueAtTime(p.amplitude, startTime + p.attack)
-    gain.gain.setValueAtTime(p.amplitude, startTime + p.attack + p.sustain)
-    gain.gain.exponentialRampToValueAtTime(
-      0.001,
-      startTime + p.attack + p.sustain + p.release
-    )
-
-    // Filter envelope: open during attack
-    filter.frequency.setValueAtTime(p.filterFreq * 0.3, startTime)
-    filter.frequency.linearRampToValueAtTime(p.filterFreq, startTime + p.attack * 1.5)
+    gain.gain.linearRampToValueAtTime(p.amplitude * 0.8, startTime + p.attack)
+    // No release scheduled — sound sustains until stop() is called
 
     // Delay with feedback
     const delay = ctx.createDelay(1)
-    delay.delayTime.value = p.delayTime
+    delay.delayTime.value = Math.min(p.delayTime, 0.5)
     const feedbackGain = ctx.createGain()
-    feedbackGain.gain.value = p.delayFeedback
+    feedbackGain.gain.value = Math.min(p.delayFeedback, 0.7)
     delay.connect(feedbackGain)
     feedbackGain.connect(delay)
 
@@ -151,32 +144,33 @@ export function playSynthesis(
     const panner = ctx.createStereoPanner()
     panner.pan.value = p.pan
 
-    // Connect chain: source → filter → gain → delay → panner → dry/reverb
+    // Connect: source → filter → gain → [delay + direct] → panner → dry/reverb
     source.connect(filter)
     filter.connect(gain)
     gain.connect(delay)
-    gain.connect(panner) // direct signal
-    delay.connect(panner) // delayed signal
+    gain.connect(panner)
+    delay.connect(panner)
     panner.connect(dryGain)
     panner.connect(convolver)
 
-    // Start
+    // Start — no stop time, runs forever
     source.start(startTime)
     lfo.start(startTime)
 
-    // Stop after envelope completes
-    const stopTime = startTime + p.attack + p.sustain + p.release + 0.5
-    if (source instanceof OscillatorNode) {
-      source.stop(stopTime)
-    } else {
-      source.stop(stopTime)
-    }
-    lfo.stop(stopTime)
-
-    voices.push({ source, filter, gain, panner, lfo, lfoGain })
+    voices.push({
+      source,
+      filter,
+      gain,
+      panner,
+      lfo,
+      lfoGain,
+      baseFilterFreq: p.filterFreq,
+      baseAmplitude: p.amplitude * 0.8,
+      basePan: p.pan,
+    })
   })
 
-  // Waveform data callback
+  // Waveform data pump
   let animFrame = 0
   if (onWaveformData) {
     const dataArray = new Uint8Array(analyser.frequencyBinCount)
@@ -189,47 +183,53 @@ export function playSynthesis(
     pump()
   }
 
-  // Auto-stop after total duration
-  const stopTimeout = setTimeout(() => {
-    cancelAnimationFrame(animFrame)
-    ctx.close()
-  }, (totalDuration + 2) * 1000)
+  let stopped = false
 
   return {
     analyser,
     stop: () => {
-      clearTimeout(stopTimeout)
+      if (stopped) return
+      stopped = true
       cancelAnimationFrame(animFrame)
-      voices.forEach((v) => {
-        try {
-          v.source.stop()
-          v.lfo.stop()
-        } catch {
-          // already stopped
-        }
-      })
-      ctx.close()
+
+      // Fade out over 0.5s then close
+      const t = ctx.currentTime
+      masterGain.gain.setTargetAtTime(0, t, 0.15)
+      setTimeout(() => {
+        voices.forEach((v) => {
+          try {
+            v.source.stop()
+            v.lfo.stop()
+          } catch {
+            // already stopped
+          }
+        })
+        ctx.close()
+      }, 800)
     },
     updateMotion: (data: MotionData) => {
+      if (stopped) return
       const t = ctx.currentTime
-      // Movement intensity → master gain + filter resonance
-      masterGain.gain.setTargetAtTime(0.4 + data.movementIntensity * 0.5, t, 0.1)
+      const smoothing = 0.08
+
       voices.forEach((v) => {
-        // Vertical position → filter cutoff
-        const baseFreq = v.filter.frequency.value
-        v.filter.frequency.setTargetAtTime(
-          200 + data.verticalPosition * 7800,
-          t,
-          0.08
-        )
-        // Filter resonance from movement
-        v.filter.Q.setTargetAtTime(0.5 + data.movementIntensity * 12, t, 0.1)
+        // Vertical → filter cutoff (hand up = brighter)
+        const targetFreq = 200 + data.verticalPosition * (v.baseFilterFreq * 2)
+        v.filter.frequency.setTargetAtTime(targetFreq, t, smoothing)
+
+        // Movement intensity → gain boost + filter resonance
+        const targetGain = v.baseAmplitude * (0.6 + data.movementIntensity * 0.8)
+        v.gain.gain.setTargetAtTime(targetGain, t, smoothing)
+        v.filter.Q.setTargetAtTime(1 + data.movementIntensity * 10, t, smoothing)
+
         // Horizontal → pan
-        v.panner.pan.setTargetAtTime(data.horizontalPosition, t, 0.1)
+        const targetPan = Math.max(-1, Math.min(1, v.basePan + data.horizontalPosition * 0.8))
+        v.panner.pan.setTargetAtTime(targetPan, t, smoothing)
       })
+
       // Spread → reverb mix
-      reverbGain.gain.setTargetAtTime(data.spread * 0.8, t, 0.15)
-      dryGain.gain.setTargetAtTime(1 - data.spread * 0.5, t, 0.15)
+      reverbGain.gain.setTargetAtTime(0.15 + data.spread * 0.7, t, 0.12)
+      dryGain.gain.setTargetAtTime(0.85 - data.spread * 0.4, t, 0.12)
     },
   }
 }

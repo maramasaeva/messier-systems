@@ -185,6 +185,7 @@ export default function ScGeneratorDemo() {
           overflow: "hidden",
         }}
       >
+        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           ref={videoRef}
           autoPlay
@@ -195,7 +196,10 @@ export default function ScGeneratorDemo() {
             height: "100%",
             objectFit: "cover",
             transform: "scaleX(-1)",
-            display: cameraActive ? "block" : "none",
+            opacity: cameraActive ? 1 : 0,
+            position: "absolute",
+            top: 0,
+            left: 0,
           }}
         />
         {cameraActive && (
