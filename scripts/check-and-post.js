@@ -1,12 +1,11 @@
 import { TwitterApi } from "twitter-api-v2";
-import { XMLParser } from "fast-xml-parser";
 import { readFileSync, writeFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const STATE_FILE = join(__dirname, "..", "data", "last-posted.json");
-const FEED_URL = "https://messinecessity.substack.com/feed";
+const API_URL = "https://messier-systems.vercel.app/api/substack";
 
 async function main() {
   // Load state
@@ -17,32 +16,24 @@ async function main() {
     // First run, no state file yet
   }
 
-  // Fetch RSS feed
-  console.log("Fetching Substack RSS feed...");
-  const res = await fetch(FEED_URL, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; messier-systems/1.0)",
-      "Accept": "application/rss+xml, application/xml, text/xml, */*",
-    },
-  });
+  // Fetch posts via our own API (Substack blocks GitHub Actions IPs directly)
+  console.log("Fetching posts via messier-systems API...");
+  const res = await fetch(API_URL);
   if (!res.ok) {
-    console.error(`Failed to fetch feed: ${res.status}`);
+    console.error(`Failed to fetch posts: ${res.status}`);
     process.exit(1);
   }
 
-  const xml = await res.text();
-  const parser = new XMLParser();
-  const feed = parser.parse(xml);
-
-  const items = feed?.rss?.channel?.item;
+  const data = await res.json();
+  const items = data?.posts;
   if (!items || items.length === 0) {
-    console.log("No items in feed");
+    console.log("No items found");
     process.exit(0);
   }
 
-  // Get the latest item (first in RSS)
-  const latest = Array.isArray(items) ? items[0] : items;
-  const guid = latest.guid || latest.link;
+  // Get the latest item
+  const latest = items[0];
+  const guid = latest.link;
   const title = latest.title;
   const link = latest.link;
 
