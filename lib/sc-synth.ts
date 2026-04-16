@@ -192,20 +192,18 @@ export function playSynthesis(
       stopped = true
       cancelAnimationFrame(animFrame)
 
-      // Fade out over 0.5s then close
-      const t = ctx.currentTime
-      masterGain.gain.setTargetAtTime(0, t, 0.15)
-      setTimeout(() => {
-        voices.forEach((v) => {
-          try {
-            v.source.stop()
-            v.lfo.stop()
-          } catch {
-            // already stopped
-          }
-        })
-        ctx.close()
-      }, 800)
+      // Immediately stop all sources and disconnect
+      voices.forEach((v) => {
+        try { v.gain.gain.cancelScheduledValues(0); v.gain.gain.value = 0 } catch {}
+        try { v.source.stop() } catch {}
+        try { v.lfo.stop() } catch {}
+        try { v.source.disconnect() } catch {}
+        try { v.filter.disconnect() } catch {}
+        try { v.gain.disconnect() } catch {}
+        try { v.panner.disconnect() } catch {}
+      })
+      try { masterGain.disconnect() } catch {}
+      ctx.close().catch(() => {})
     },
     updateMotion: (data: MotionData) => {
       if (stopped) return
