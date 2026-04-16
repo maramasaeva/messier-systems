@@ -176,9 +176,9 @@ export default function ScGeneratorDemo() {
         style={{
           position: "fixed",
           top: "1rem",
-          right: "1rem",
-          width: "180px",
-          height: "135px",
+          right: "2rem",
+          width: "240px",
+          height: "180px",
           border: `0.5px solid ${cameraActive ? "#c8f06040" : "#222220"}`,
           background: "#111110",
           zIndex: 50,
@@ -233,9 +233,9 @@ export default function ScGeneratorDemo() {
         <div
           style={{
             position: "fixed",
-            top: "calc(135px + 1.5rem)",
-            right: "1rem",
-            width: "180px",
+            top: "calc(180px + 1.5rem)",
+            right: "2rem",
+            width: "240px",
             fontSize: "9px",
             color: "#555550",
             zIndex: 50,
