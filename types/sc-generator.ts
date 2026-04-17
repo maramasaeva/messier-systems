@@ -35,9 +35,25 @@ export interface GenerateResponse {
   caption: string
 }
 
+export interface GestureState {
+  bothHandsHigh: boolean
+  bothHandsHighProgress: number
+}
+
 export interface MotionData {
   movementIntensity: number
   horizontalPosition: number
   verticalPosition: number
   spread: number
+  gestures: GestureState
+}
+
+export interface EffectsState {
+  reverb: { mix: number; size: number }
+  delay: { time: number; feedback: number }
+  echo: { level: number; spread: number }
+  eq: { low: number; mid: number; high: number }
+  filter: { type: "lowpass" | "highpass"; cutoff: number; resonance: number }
+  distortion: { drive: number }
+  loop: { active: boolean; length: number }
 }

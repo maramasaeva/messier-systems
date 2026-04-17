@@ -1,21 +1,31 @@
-import type { MotionData } from "@/types/sc-generator"
+import type { MotionData, GestureState } from "@/types/sc-generator"
 import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
 interface MotionTracker {
   start: (videoEl: HTMLVideoElement) => Promise<void>
   stop: () => void
-  onFrame: (callback: (data: MotionData) => void) => void
+  onFrame: (callback: (data: MotionData, landmarks: number[][][]) => void) => void
   isActive: () => boolean
 }
+
+type Point = { x: number; y: number; z: number }
+type Hand = Point[]
+
+const HOLD_FRAMES = 12
+const COOLDOWN_FRAMES = 40
+const HIGH_THRESHOLD = 0.28
 
 export async function createMotionTracker(): Promise<MotionTracker> {
   let handLandmarker: HandLandmarker | null = null
   let stream: MediaStream | null = null
   let animFrame = 0
   let active = false
-  let frameCallback: ((data: MotionData) => void) | null = null
-  let prevLandmarks: number[][] | null = null
+  let frameCallback: ((data: MotionData, landmarks: number[][][]) => void) | null = null
+  let prevFlatLandmarks: number[][] | null = null
   let videoEl: HTMLVideoElement | null = null
+
+  let bothHandsHighLatched = false
+  let bothHandsHighTimer = 0
 
   async function initHandLandmarker() {
     const vision = await FilesetResolver.forVisionTasks(
@@ -35,13 +45,54 @@ export async function createMotionTracker(): Promise<MotionTracker> {
     })
   }
 
-  function extractMotionData(landmarks: number[][]): MotionData {
-    if (landmarks.length === 0) {
+  function handCentroid(hand: Hand): { x: number; y: number } {
+    let x = 0
+    let y = 0
+    for (const p of hand) {
+      x += p.x
+      y += p.y
+    }
+    return { x: x / hand.length, y: y / hand.length }
+  }
+
+  function extractGestures(hands: Hand[]): GestureState {
+    const centroids = hands.length >= 2 ? hands.map(handCentroid) : []
+    const bothHigh = centroids.length >= 2 && centroids.every((c) => c.y < HIGH_THRESHOLD)
+
+    if (bothHandsHighTimer < 0) {
+      bothHandsHighTimer++
+    } else if (bothHigh) {
+      bothHandsHighTimer++
+      if (bothHandsHighTimer > HOLD_FRAMES) {
+        bothHandsHighLatched = !bothHandsHighLatched
+        bothHandsHighTimer = -COOLDOWN_FRAMES
+      }
+    } else {
+      bothHandsHighTimer = 0
+    }
+
+    const progress =
+      bothHandsHighTimer > 0 ? Math.min(bothHandsHighTimer / HOLD_FRAMES, 1) : 0
+
+    return {
+      bothHandsHigh: bothHandsHighLatched,
+      bothHandsHighProgress: progress,
+    }
+  }
+
+  function extractMotionData(hands: Hand[]): MotionData {
+    const flat: number[][] = []
+    for (const hand of hands) {
+      for (const p of hand) flat.push([p.x, p.y, p.z])
+    }
+
+    if (flat.length === 0) {
       return {
         movementIntensity: 0,
         horizontalPosition: 0,
         verticalPosition: 0.5,
         spread: 0,
+        gestures: extractGestures([]),
       }
     }
 
@@ -52,7 +103,7 @@ export async function createMotionTracker(): Promise<MotionTracker> {
     let minY = 1
     let maxY = 0
 
-    for (const [x, y] of landmarks) {
+    for (const [x, y] of flat) {
       avgX += x
       avgY += y
       minX = Math.min(minX, x)
@@ -60,26 +111,32 @@ export async function createMotionTracker(): Promise<MotionTracker> {
       minY = Math.min(minY, y)
       maxY = Math.max(maxY, y)
     }
-    avgX /= landmarks.length
-    avgY /= landmarks.length
+    avgX /= flat.length
+    avgY /= flat.length
 
     let movementIntensity = 0
-    if (prevLandmarks && prevLandmarks.length === landmarks.length) {
+    if (prevFlatLandmarks && prevFlatLandmarks.length === flat.length) {
       let totalDelta = 0
-      for (let i = 0; i < landmarks.length; i++) {
-        const dx = landmarks[i][0] - prevLandmarks[i][0]
-        const dy = landmarks[i][1] - prevLandmarks[i][1]
+      for (let i = 0; i < flat.length; i++) {
+        const dx = flat[i][0] - prevFlatLandmarks[i][0]
+        const dy = flat[i][1] - prevFlatLandmarks[i][1]
         totalDelta += Math.sqrt(dx * dx + dy * dy)
       }
-      movementIntensity = Math.min((totalDelta / landmarks.length) * 15, 1)
+      movementIntensity = Math.min((totalDelta / flat.length) * 15, 1)
     }
-    prevLandmarks = landmarks
+    prevFlatLandmarks = flat
 
     const horizontalPosition = (avgX - 0.5) * -2
     const verticalPosition = 1 - avgY
     const spread = Math.min(Math.max(maxX - minX, maxY - minY) * 2, 1)
 
-    return { movementIntensity, horizontalPosition, verticalPosition, spread }
+    return {
+      movementIntensity,
+      horizontalPosition,
+      verticalPosition,
+      spread,
+      gestures: extractGestures(hands),
+    }
   }
 
   function processFrame() {
@@ -89,18 +146,17 @@ export async function createMotionTracker(): Promise<MotionTracker> {
     }
 
     const result = handLandmarker.detectForVideo(videoEl, performance.now())
-    const allLandmarks: number[][] = []
+    const hands: Hand[] = []
 
     if (result.landmarks) {
       for (const hand of result.landmarks) {
-        for (const point of hand) {
-          allLandmarks.push([point.x, point.y, point.z])
-        }
+        hands.push(hand.map((p) => ({ x: p.x, y: p.y, z: p.z })))
       }
     }
 
-    const data = extractMotionData(allLandmarks)
-    if (frameCallback) frameCallback(data)
+    const data = extractMotionData(hands)
+    const landmarks: number[][][] = hands.map((h) => h.map((p) => [p.x, p.y, p.z]))
+    if (frameCallback) frameCallback(data, landmarks)
 
     animFrame = requestAnimationFrame(processFrame)
   }

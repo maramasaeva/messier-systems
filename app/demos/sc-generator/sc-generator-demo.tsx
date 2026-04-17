@@ -1,9 +1,101 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import type { EmotionResult, MotionData } from "@/types/sc-generator"
+import type { EmotionResult, MotionData, EffectsState } from "@/types/sc-generator"
 
 type Stage = "idle" | "analyzing" | "matching" | "generating" | "complete"
+
+type FxLine = { k: string; v: number; pct?: boolean; suffix?: string; max?: number; signed?: boolean }
+
+const HAND_CONNECTIONS: Array<[number, number]> = [
+  [0, 1], [1, 2], [2, 3], [3, 4],
+  [0, 5], [5, 6], [6, 7], [7, 8],
+  [5, 9], [9, 10], [10, 11], [11, 12],
+  [9, 13], [13, 14], [14, 15], [15, 16],
+  [13, 17], [0, 17], [17, 18], [18, 19], [19, 20],
+]
+
+function drawSkeleton(canvas: HTMLCanvasElement, hands: number[][][]) {
+  const ctx = canvas.getContext("2d")
+  if (!ctx) return
+  const w = canvas.width
+  const h = canvas.height
+  ctx.clearRect(0, 0, w, h)
+  if (hands.length === 0) return
+  ctx.strokeStyle = "#c8f060aa"
+  ctx.fillStyle = "#c8f060"
+  ctx.lineWidth = 1.25
+  for (const hand of hands) {
+    for (const [a, b] of HAND_CONNECTIONS) {
+      const pa = hand[a]
+      const pb = hand[b]
+      if (!pa || !pb) continue
+      ctx.beginPath()
+      ctx.moveTo(pa[0] * w, pa[1] * h)
+      ctx.lineTo(pb[0] * w, pb[1] * h)
+      ctx.stroke()
+    }
+    for (const p of hand) {
+      ctx.beginPath()
+      ctx.arc(p[0] * w, p[1] * h, 1.75, 0, Math.PI * 2)
+      ctx.fill()
+    }
+  }
+}
+
+function MetricBar({ label, value, color, signed }: { label: string; value: number; color: string; signed?: boolean }) {
+  const pct = signed ? Math.abs(value) : Math.max(0, Math.min(1, value))
+  const display = signed ? value.toFixed(2) : `${Math.round(pct * 100)}%`
+  return (
+    <div style={{ marginBottom: "4px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "9px", marginBottom: "1px" }}>
+        <span>{label}</span>
+        <span style={{ color }}>{display}</span>
+      </div>
+      <div style={{ width: "100%", height: "2px", background: "#222220" }}>
+        <div style={{ width: `${pct * 100}%`, height: "100%", background: color, transition: "width 0.1s ease" }} />
+      </div>
+    </div>
+  )
+}
+
+function FxPanel({ label, accent, lines }: { label: string; accent: string; lines: FxLine[] }) {
+  return (
+    <div style={{ border: `0.5px solid ${accent}33`, padding: "10px 12px", background: "#111110" }}>
+      <div style={{ fontSize: "10px", letterSpacing: "0.15em", textTransform: "uppercase", color: accent, marginBottom: "8px" }}>
+        {label}
+      </div>
+      {lines.map((line) => {
+        const max = line.max ?? 1
+        const abs = line.signed ? Math.abs(line.v) : line.v
+        const norm = Math.max(0, Math.min(1, abs / max))
+        const displayValue = line.pct
+          ? `${(line.v * 100).toFixed(0)}%`
+          : line.suffix
+            ? `${line.v.toFixed(line.suffix === "Hz" ? 0 : 2)}${line.suffix}`
+            : line.v.toFixed(2)
+        return (
+          <div key={line.k} style={{ marginBottom: "6px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10px", color: "#888880", marginBottom: "2px" }}>
+              <span>{line.k}</span>
+              <span style={{ color: "#ddddd8" }}>{displayValue}</span>
+            </div>
+            <div style={{ width: "100%", height: "2px", background: "#222220", position: "relative" }}>
+              <div
+                style={{
+                  width: `${norm * 100}%`,
+                  height: "100%",
+                  background: accent,
+                  transition: "width 0.12s ease",
+                }}
+              />
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 export default function ScGeneratorDemo() {
   const [text, setText] = useState("")
@@ -18,10 +110,12 @@ export default function ScGeneratorDemo() {
   const [cameraActive, setCameraActive] = useState(false)
   const [cameraError, setCameraError] = useState(false)
   const [motionData, setMotionData] = useState<MotionData | null>(null)
+  const [effectsState, setEffectsState] = useState<EffectsState | null>(null)
 
   const synthRef = useRef<{ stop: () => void; updateMotion: (d: MotionData) => void } | null>(null)
   const motionRef = useRef<{ stop: () => void } | null>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
+  const skeletonCanvasRef = useRef<HTMLCanvasElement>(null)
   const userStoppedRef = useRef(false)
 
   // Initialize camera on mount
@@ -40,7 +134,8 @@ export default function ScGeneratorDemo() {
         }
         motionRef.current = tracker
 
-        tracker.onFrame((data) => {
+        tracker.onFrame((data, landmarks) => {
+          if (skeletonCanvasRef.current) drawSkeleton(skeletonCanvasRef.current, landmarks)
           setMotionData(data)
           synthRef.current?.updateMotion(data)
         })
@@ -82,9 +177,15 @@ export default function ScGeneratorDemo() {
 
     async function startAudio() {
       const { playSynthesis } = await import("@/lib/sc-synth")
-      const result = playSynthesis(emotions, (data) => {
-        setWaveformData(data.slice(0, 64))
-      })
+      const result = playSynthesis(
+        emotions,
+        (data) => {
+          setWaveformData(data.slice(0, 64))
+        },
+        (state) => {
+          setEffectsState(state)
+        }
+      )
       synthRef.current = result
       setIsPlaying(true)
     }
@@ -98,6 +199,7 @@ export default function ScGeneratorDemo() {
     synthRef.current = null
     setIsPlaying(false)
     setWaveformData([])
+    setEffectsState(null)
   }, [])
 
   const handleGenerate = async () => {
@@ -188,7 +290,6 @@ export default function ScGeneratorDemo() {
           overflow: "hidden",
         }}
       >
-        {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
         <video
           ref={videoRef}
           autoPlay
@@ -205,6 +306,60 @@ export default function ScGeneratorDemo() {
             left: 0,
           }}
         />
+        <canvas
+          ref={skeletonCanvasRef}
+          width={240}
+          height={180}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            transform: "scaleX(-1)",
+            pointerEvents: "none",
+            opacity: cameraActive ? 1 : 0,
+          }}
+        />
+        {cameraActive && motionData && motionData.gestures.bothHandsHighProgress > 0.1 && !motionData.gestures.bothHandsHigh && (
+          <div
+            style={{
+              position: "absolute",
+              top: "4px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              fontSize: "9px",
+              color: "#c8f060",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              background: "#0a0a08cc",
+              padding: "3px 6px",
+              opacity: motionData.gestures.bothHandsHighProgress,
+              whiteSpace: "nowrap",
+            }}
+          >
+            hold ↑ for loop…
+          </div>
+        )}
+        {cameraActive && motionData?.gestures.bothHandsHigh && (
+          <div
+            style={{
+              position: "absolute",
+              top: "4px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              fontSize: "9px",
+              color: "#0a0a08",
+              background: "#c8f060",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              padding: "3px 6px",
+              whiteSpace: "nowrap",
+            }}
+          >
+            loop frozen · both hands up to release
+          </div>
+        )}
         {cameraActive && (
           <div
             style={{
@@ -245,21 +400,15 @@ export default function ScGeneratorDemo() {
             fontFamily: "'DM Mono', monospace",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>motion</span>
-            <span style={{ color: "#c8f060" }}>{(motionData.movementIntensity * 100).toFixed(0)}%</span>
+          <div style={{ color: "#333330", textTransform: "uppercase", letterSpacing: "0.15em", fontSize: "8px", marginBottom: "6px" }}>
+            body → sound
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>height</span>
-            <span style={{ color: "#60c8f0" }}>{(motionData.verticalPosition * 100).toFixed(0)}%</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>pan</span>
-            <span style={{ color: "#f060a0" }}>{motionData.horizontalPosition.toFixed(2)}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>spread</span>
-            <span style={{ color: "#a060f0" }}>{(motionData.spread * 100).toFixed(0)}%</span>
+          <MetricBar label="height → brightness" value={motionData.verticalPosition} color="#60c8f0" />
+          <MetricBar label="spread → space" value={motionData.spread} color="#a060f0" />
+          <MetricBar label="motion → energy" value={motionData.movementIntensity} color="#f06060" />
+          <MetricBar label="horizontal → pan" value={motionData.horizontalPosition} color="#f060a0" signed />
+          <div style={{ marginTop: "0.75rem", color: "#555550", fontSize: "9px", lineHeight: 1.5 }}>
+            + raise both hands to freeze a loop
           </div>
         </div>
       )}
@@ -510,6 +659,47 @@ export default function ScGeneratorDemo() {
               </section>
             </>
           )}
+
+          {/* effects rack */}
+          {stage === "complete" && effectsState && (
+            <>
+              <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: 0 }} />
+              <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
+                <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "1rem" }}>
+                  05 — effects rack
+                  <span style={{ color: "#888880", marginLeft: "8px" }}>gesture-controlled</span>
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "14px" }}>
+                  <FxPanel label="reverb" accent="#a060f0" lines={[
+                    { k: "mix", v: effectsState.reverb.mix, pct: true },
+                    { k: "size", v: effectsState.reverb.size, suffix: "s", max: 4 },
+                  ]} />
+                  <FxPanel label="delay" accent="#60c8f0" lines={[
+                    { k: "time", v: effectsState.delay.time, suffix: "s", max: 1 },
+                    { k: "feedback", v: effectsState.delay.feedback, pct: true },
+                  ]} />
+                  <FxPanel label="echo" accent="#f0c860" lines={[
+                    { k: "level", v: effectsState.echo.level, pct: true },
+                    { k: "spread", v: effectsState.echo.spread, pct: true },
+                  ]} />
+                  <FxPanel label={`filter · ${effectsState.filter.type}`} accent="#f060a0" lines={[
+                    { k: "cutoff", v: effectsState.filter.cutoff, suffix: "Hz", max: 18000 },
+                    { k: "reso", v: effectsState.filter.resonance, max: 20 },
+                  ]} />
+                  <FxPanel label="distortion" accent="#f06060" lines={[
+                    { k: "drive", v: effectsState.distortion.drive, pct: true },
+                  ]} />
+                  <FxPanel label={`loop · ${effectsState.loop.active ? "frozen" : "idle"}`} accent={effectsState.loop.active ? "#c8f060" : "#555550"} lines={[
+                    { k: "length", v: effectsState.loop.length, suffix: "s", max: 4 },
+                    { k: "state", v: effectsState.loop.active ? 1 : 0, pct: true },
+                  ]} />
+                </div>
+                <p style={{ marginTop: "1rem", fontSize: "10px", color: "#555550", lineHeight: 1.6 }}>
+                  height → filter brightness · spread → reverb + echo space · motion → distortion + delay · both hands high → loop freeze
+                </p>
+              </section>
+            </>
+          )}
         </>
       )}
 
@@ -517,7 +707,7 @@ export default function ScGeneratorDemo() {
       <section style={{ padding: "2rem 2rem 4rem", maxWidth: "900px" }}>
         <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: "0 0 2rem 0" }} />
         <p style={{ fontSize: "0.8rem", lineHeight: 1.8, color: "#555550", maxWidth: "560px" }}>
-          powered by gpt-4o-mini for emotional analysis and supercollider code generation, web audio api for browser-based synthesis, and mediapipe for real-time hand tracking. move your hands to shape the sound — height controls brightness, position controls pan, spread controls reverb.
+          powered by gpt-4o-mini for emotional analysis and supercollider code generation, web audio api for browser-based synthesis, and mediapipe for real-time hand tracking. move your hands to shape the sound — height controls brightness, spread opens space, motion adds energy, and raising both hands freezes a loop.
         </p>
         <p style={{ marginTop: "0.75rem", fontSize: "0.8rem", lineHeight: 1.8, color: "#555550" }}>
           based on{" "}
