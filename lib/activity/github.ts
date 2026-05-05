@@ -24,7 +24,7 @@ export async function fetchGitHubActivity(): Promise<ActivityItem[]> {
 
   for (const event of events) {
     const repo = event.repo?.name?.split('/')[1] || 'unknown'
-    // Skip obsidian repo — handled by obsidian fetcher
+    // Skip obsidian repo - handled by obsidian fetcher
     if (repo === 'obsidian') continue
 
     const day = event.created_at?.slice(0, 10)

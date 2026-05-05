@@ -92,7 +92,7 @@ export function playSynthesis(
   clipper.connect(analyser)
   analyser.connect(ctx.destination)
 
-  // Voices bus — everything enters the FX rack here
+  // Voices bus - everything enters the FX rack here
   const voicesBus = ctx.createGain()
   voicesBus.gain.value = 1
 

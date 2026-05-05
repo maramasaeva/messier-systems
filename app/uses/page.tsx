@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { epkData } from "@/data/epk"
 
 export const metadata: Metadata = {
-  title: "Uses | Mara Masaeva — Tools & Stack",
+  title: "Uses | Mara Masaeva - Tools & Stack",
   description:
     "The tools, languages, frameworks, and infrastructure Mara Masaeva uses for AI engineering, music production, and creative technology.",
   keywords: [
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "Mara Masaeva",
   ],
   openGraph: {
-    title: "Uses | Mara Masaeva — Tools & Stack",
+    title: "Uses | Mara Masaeva - Tools & Stack",
     description:
       "Tools, languages, frameworks, and infrastructure for AI engineering and creative technology.",
     url: "https://messier-systems.vercel.app/uses",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Uses | Mara Masaeva — Tools & Stack",
+    title: "Uses | Mara Masaeva - Tools & Stack",
     description:
       "Tools, languages, frameworks, and infrastructure for AI engineering and creative technology.",
     site: "@rssmrm",

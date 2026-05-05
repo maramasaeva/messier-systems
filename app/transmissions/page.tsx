@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 const BASE_URL = "https://messier-systems.vercel.app"
 
 export const metadata: Metadata = {
-  title: "transmissions — messier systems",
+  title: "transmissions - messier systems",
   description:
     "fragments on time-sorcery, queer loops, and the lesbian body. field notes from a queer computer assembling itself.",
   keywords: [
@@ -156,7 +156,7 @@ export default function TransmissionsPage() {
         ))}
 
         <p className="tx-foot">
-          — <a href="/">return to origin</a>
+          - <a href="/">return to origin</a>
         </p>
       </div>
     </main>

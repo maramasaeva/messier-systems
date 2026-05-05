@@ -18,7 +18,7 @@ export async function fetchGitLabActivity(): Promise<ActivityItem[]> {
 
   const events = await res.json()
 
-  // Group events by day — never expose repo names or commit messages
+  // Group events by day - never expose repo names or commit messages
   const dayMap = new Map<string, number>()
   for (const event of events) {
     const day = event.created_at?.slice(0, 10)

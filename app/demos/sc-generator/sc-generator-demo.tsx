@@ -276,7 +276,7 @@ export default function ScGeneratorDemo() {
         textarea::placeholder { color: #333330; }
       `}</style>
 
-      {/* Camera inset — top right */}
+      {/* Camera inset - top right */}
       <div
         style={{
           position: "fixed",
@@ -380,7 +380,7 @@ export default function ScGeneratorDemo() {
         {!cameraActive && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", padding: "8px" }}>
             <span style={{ fontSize: "9px", color: "#555550", textAlign: "center", lineHeight: 1.5 }}>
-              {cameraError ? "camera unavailable — audio still works" : "requesting camera..."}
+              {cameraError ? "camera unavailable - audio still works" : "requesting camera..."}
             </span>
           </div>
         )}
@@ -532,7 +532,7 @@ export default function ScGeneratorDemo() {
           <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
             <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "1rem" }}>
               <span className={stage === "analyzing" ? "analyzing-pulse" : ""}>
-                01 — emotional analysis
+                01 - emotional analysis
               </span>
               {stage !== "analyzing" && <span style={{ color: "#c8f060", marginLeft: "8px" }}>done</span>}
             </p>
@@ -567,7 +567,7 @@ export default function ScGeneratorDemo() {
               <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
                 <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "1rem" }}>
                   <span className={stage === "matching" ? "analyzing-pulse" : ""}>
-                    02 — synth mapping
+                    02 - synth mapping
                   </span>
                   {stage !== "matching" && <span style={{ color: "#c8f060", marginLeft: "8px" }}>done</span>}
                 </p>
@@ -598,7 +598,7 @@ export default function ScGeneratorDemo() {
               <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: 0 }} />
               <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
                 <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "0.5rem" }}>
-                  03 — supercollider output
+                  03 - supercollider output
                   {stage === "complete" && <span style={{ color: "#c8f060", marginLeft: "8px" }}>done</span>}
                 </p>
                 {caption && (
@@ -632,7 +632,7 @@ export default function ScGeneratorDemo() {
               <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: 0 }} />
               <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
                 <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "1rem" }}>
-                  04 — web audio synthesis
+                  04 - web audio synthesis
                   {isPlaying && <span style={{ color: "#c8f060", marginLeft: "8px" }}>playing</span>}
                   {cameraActive && isPlaying && <span style={{ color: "#a060f0", marginLeft: "8px" }}>+ body modulation</span>}
                 </p>
@@ -666,7 +666,7 @@ export default function ScGeneratorDemo() {
               <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: 0 }} />
               <section style={{ maxWidth: "900px", padding: "2rem" }} className="slide-in">
                 <p style={{ fontSize: "11px", letterSpacing: "0.2em", textTransform: "uppercase" as const, color: "#555550", marginBottom: "1rem" }}>
-                  05 — effects rack
+                  05 - effects rack
                   <span style={{ color: "#888880", marginLeft: "8px" }}>gesture-controlled</span>
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "14px" }}>
@@ -707,7 +707,7 @@ export default function ScGeneratorDemo() {
       <section style={{ padding: "2rem 2rem 4rem", maxWidth: "900px" }}>
         <hr style={{ border: "none", borderTop: "0.5px solid #222220", margin: "0 0 2rem 0" }} />
         <p style={{ fontSize: "0.8rem", lineHeight: 1.8, color: "#555550", maxWidth: "560px" }}>
-          powered by gpt-4o-mini for emotional analysis and supercollider code generation, web audio api for browser-based synthesis, and mediapipe for real-time hand tracking. move your hands to shape the sound — height controls brightness, spread opens space, motion adds energy, and raising both hands freezes a loop.
+          powered by gpt-4o-mini for emotional analysis and supercollider code generation, web audio api for browser-based synthesis, and mediapipe for real-time hand tracking. move your hands to shape the sound - height controls brightness, spread opens space, motion adds energy, and raising both hands freezes a loop.
         </p>
         <p style={{ marginTop: "0.75rem", fontSize: "0.8rem", lineHeight: 1.8, color: "#555550" }}>
           based on{" "}

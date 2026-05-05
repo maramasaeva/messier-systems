@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 
 export const runtime = "nodejs"
-export const alt = "Mara Masaeva — Resume — AI Engineer"
+export const alt = "Mara Masaeva - Resume - AI Engineer"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -43,7 +43,7 @@ export default async function Image() {
           >
             <span>python / typescript / pytorch / fastapi / next.js</span>
             <span>mcp servers / agentic architectures / generative ai / nlp</span>
-            <span>ku leuven — advanced master of artificial intelligence</span>
+            <span>ku leuven - advanced master of artificial intelligence</span>
           </div>
         </div>
         <div

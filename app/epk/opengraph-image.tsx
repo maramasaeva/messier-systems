@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 
 export const runtime = "nodejs"
-export const alt = "messier — Electronic Press Kit"
+export const alt = "messier - Electronic Press Kit"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -53,7 +53,7 @@ export default async function Image() {
             gap: "32px",
           }}
         >
-          <span>mara masaeva — leuven, belgium</span>
+          <span>mara masaeva - leuven, belgium</span>
           <span style={{ color: "#8aaa30" }}>messier-systems.vercel.app/epk</span>
         </div>
       </div>

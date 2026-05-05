@@ -40,7 +40,7 @@ EMOTIONAL ANALYSIS:
 - Assign confidence scores (0-1) that sum to approximately 1.0
 - Extract 1-3 specific words from the poem that evidence each emotion
 
-WEB AUDIO SYNTHESIS PARAMETERS — for each emotion, provide parameters that will drive browser-based synthesis:
+WEB AUDIO SYNTHESIS PARAMETERS - for each emotion, provide parameters that will drive browser-based synthesis:
 - waveform: one of "sine", "sawtooth", "square", "triangle", "noise"
 - frequency: base Hz (40-2000, lower for dark emotions, higher for bright)
 - detune: cents (-50 to 50)
@@ -72,7 +72,7 @@ Generate valid, runnable SuperCollider code that interprets the poem musically. 
 
 Also provide a one-line musical caption describing what the generated piece sounds like.
 
-RESPONSE FORMAT — return ONLY valid JSON, no markdown fences:
+RESPONSE FORMAT - return ONLY valid JSON, no markdown fences:
 {
   "emotions": [
     {

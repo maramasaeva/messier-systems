@@ -285,7 +285,7 @@ const WritingWindowContent = () => {
             </div>
           ))
         ) : (
-          <div className="text-gray-500">feed unavailable — visit substack directly</div>
+          <div className="text-gray-500">feed unavailable - visit substack directly</div>
         )}
       </div>
 
@@ -363,7 +363,7 @@ const EpkWindowContent = () => {
                     <div className="text-gray-500 mb-1">genres: {epkData.music.genres.join(", ")}</div>
                     {epkData.music.releases.map((r, i) => (
                       <div key={i}>
-                        <span className="text-pink-400">{r.title}</span> — {r.type}, {r.date}, {r.trackCount} tracks
+                        <span className="text-pink-400">{r.title}</span> / {r.type}, {r.date}, {r.trackCount} tracks
                         {r.description && <div className="text-gray-500 ml-2">{r.description}</div>}
                       </div>
                     ))}
@@ -393,7 +393,7 @@ const EpkWindowContent = () => {
                       ) : (
                         <span className="text-pink-400">{t.project}</span>
                       )}
-                      {t.role && <span className="text-gray-500"> — {t.role}</span>}
+                      {t.role && <span className="text-gray-500"> / {t.role}</span>}
                     </div>
                     <div className="text-gray-500">{t.description}</div>
                   </div>
@@ -403,7 +403,7 @@ const EpkWindowContent = () => {
                   <>
                     <div>
                       <a href={epkData.writing.substack} target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">{epkData.writing.publication}</a>
-                      <span className="text-gray-500"> — &quot;{epkData.writing.tagline}&quot;</span>
+                      <span className="text-gray-500"> / &quot;{epkData.writing.tagline}&quot;</span>
                     </div>
                     <div>form: {epkData.writing.form}</div>
                     <div className="text-gray-500">themes: {epkData.writing.themes.join(", ")}</div>
@@ -412,7 +412,7 @@ const EpkWindowContent = () => {
                 )}
 
                 {id === "press" && (
-                  <div className="text-gray-500 italic">[awaiting upload — add images to /press/]</div>
+                  <div className="text-gray-500 italic">[awaiting upload - add images to /press/]</div>
                 )}
 
                 {id === "contact" && (
@@ -2156,6 +2156,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
             <span className="text-gray-600 mr-1">~/</span>
             {[
               { href: "/projects", label: "projects" },
+              { href: "/security", label: "security" },
               { href: "/demos", label: "demos" },
               { href: "/blog", label: "blog" },
               { href: "/resume", label: "resume" },

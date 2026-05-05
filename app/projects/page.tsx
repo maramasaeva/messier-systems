@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { epkData } from "@/data/epk"
 
 export const metadata: Metadata = {
-  title: "Projects | Mara Masaeva — AI Engineer",
+  title: "Projects | Mara Masaeva - AI Engineer",
   description:
     "AI and creative technology projects by Mara Masaeva: MCP servers, agentic architectures, AI companions, generative sound systems, moral AI, and more.",
   keywords: [
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     "creative technology",
   ],
   openGraph: {
-    title: "Projects | Mara Masaeva — AI Engineer",
+    title: "Projects | Mara Masaeva - AI Engineer",
     description:
       "AI and creative technology projects: MCP servers, agentic architectures, AI companions, generative sound systems.",
     url: "https://messier-systems.vercel.app/projects",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Projects | Mara Masaeva — AI Engineer",
+    title: "Projects | Mara Masaeva - AI Engineer",
     description:
       "AI and creative technology projects: MCP servers, agentic architectures, AI companions, generative sound.",
     site: "@rssmrm",
@@ -69,6 +69,9 @@ export default function ProjectsPage() {
           ← messier.exe
         </a>
         <div style={{ display: "flex", gap: "2rem" }}>
+          <a href="/security" style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#555550", textDecoration: "none" }}>
+            security
+          </a>
           <a href="/blog" style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#555550", textDecoration: "none" }}>
             blog
           </a>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Blog | Mara Masaeva — Writing on AI, Sound & Theory",
+  title: "Blog | Mara Masaeva - Writing on AI, Sound & Theory",
   description:
     "Prose poetry, theory-fiction, and writing on AI, sound systems, queerness, cybernetics, and digital-physical collapse by Mara Masaeva.",
   keywords: [

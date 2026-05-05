@@ -24,11 +24,11 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://messier-systems.vercel.app"),
   title: {
-    default: "messier systems — Mara Masaeva",
+    default: "messier systems - Mara Masaeva",
     template: "%s | messier systems",
   },
   description:
-    "Mara Masaeva — AI engineer, electronic music producer, and writer. Building production AI systems, generative sound, and agentic architectures. Leuven, Belgium.",
+    "Mara Masaeva - AI engineer, electronic music producer, and writer. Building production AI systems, generative sound, and agentic architectures. Leuven, Belgium.",
   alternates: {
     types: {
       "application/rss+xml": "/feed.xml",

@@ -171,7 +171,7 @@ export default function ServicesPage() {
         <div className="mb-16">
           <div className="text-pink-400 text-sm mb-4">$ whoami --verbose</div>
           <div className="border border-gray-800 p-6 text-sm text-gray-400 leading-relaxed space-y-2">
-            <p>ai engineer at a creative agency. i build mcp servers, content automation pipelines, pitch generators, editorial ai, and offer management systems — all in production, all used daily by real teams.</p>
+            <p>ai engineer at a creative agency. i build mcp servers, content automation pipelines, pitch generators, editorial ai, and offer management systems - all in production, all used daily by real teams.</p>
             <p>also: music producer (messier), creative coder, writer. i think about systems at the intersection of engineering and art.</p>
             <p>stack: python, fastapi, fastmcp, claude api, typescript, next.js, supercollider, pytorch, docker, gcp.</p>
           </div>

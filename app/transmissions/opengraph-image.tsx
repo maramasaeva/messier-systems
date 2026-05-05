@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og"
 
 export const runtime = "nodejs"
-export const alt = "transmissions — messier systems"
+export const alt = "transmissions - messier systems"
 export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
@@ -65,7 +65,7 @@ export default async function Image() {
             justifyContent: "space-between",
           }}
         >
-          <span>transmissions — fragments from a queer computer</span>
+          <span>transmissions - fragments from a queer computer</span>
           <span style={{ color: "#8aaa30" }}>messier-systems.vercel.app</span>
         </div>
       </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Demos | Mara Masaeva — Interactive Project Demos",
+  title: "Demos | Mara Masaeva - Interactive Project Demos",
   description:
     "Interactive demos of AI and creative technology projects by Mara Masaeva. Try sc_generator, explore generative sound, and more.",
   keywords: [
@@ -36,7 +36,7 @@ const demos = [
     slug: "sc-generator",
     title: "sc_generator",
     description:
-      "type a poem. watch it become sound. an interactive demo of the poem-to-supercollider pipeline — emotional analysis, audio matching, and live code generation.",
+      "type a poem. watch it become sound. an interactive demo of the poem-to-supercollider pipeline - emotional analysis, audio matching, and live code generation.",
     tags: ["python", "supercollider", "pytorch", "generative music"],
     status: "live" as const,
   },

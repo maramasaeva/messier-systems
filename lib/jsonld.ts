@@ -70,7 +70,7 @@ export function getWebSiteJsonLd() {
     name: "messier systems",
     url: "https://messier-systems.vercel.app",
     description:
-      "Personal website of Mara Masaeva — AI engineer, electronic music producer, and writer.",
+      "Personal website of Mara Masaeva - AI engineer, electronic music producer, and writer.",
     author: {
       "@type": "Person",
       name: "Mara Masaeva",

@@ -37,13 +37,13 @@ export async function GET() {
       }
     }
   } catch {
-    // Substack unavailable — return feed without posts
+    // Substack unavailable - return feed without posts
   }
 
   const feed = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>messier systems — Mara Masaeva</title>
+    <title>messier systems - Mara Masaeva</title>
     <link>${BASE_URL}</link>
     <description>AI engineer, electronic music producer, and writer. Building production AI systems, generative sound, and agentic architectures.</description>
     <language>en</language>

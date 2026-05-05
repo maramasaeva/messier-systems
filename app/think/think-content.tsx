@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const glitchChars = "!<>-_\\/[]{}—=+*^?#░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌";
+const glitchChars = "!<>-_\\/[]{}-=+*^?#░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌";
 
 type Lang = "en" | "nl";
 
