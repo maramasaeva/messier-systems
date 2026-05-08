@@ -130,6 +130,7 @@ the name "messier" references both their surname and the messier catalogue of de
       "prompt engineering and constitutional ai patterns",
       "human-centred ai and inclusive tooling",
       "model safety, reliability, and alignment",
+      "autonomous trading systems and quantitative strategies",
     ],
   },
 
@@ -219,6 +220,12 @@ the name "messier" references both their surname and the messier catalogue of de
       url: "https://github.com/maramasaeva/ableton-dj-mcp",
       description:
         "mcp server that lets ai agents dj autonomously in ableton live. track analysis, beat matching, eq, effects, transitions. the first ai dj inside a daw.",
+    },
+    {
+      project: "edgemarket",
+      url: "https://github.com/maramasaeva/edgemarket",
+      description:
+        "autonomous crypto trading bot for hyperliquid perps. z-score spread arbitrage between binance and hyperliquid, multi-asset momentum, adaptive position sizing with kelly criterion. built with claude code in a single session.",
     },
   ],
 
