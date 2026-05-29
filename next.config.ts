@@ -37,8 +37,10 @@ const nextConfig: NextConfig = {
             value: "nosniff",
           },
           {
+            // SAMEORIGIN (not DENY) so the /3d experiment can embed our own
+            // routes in iframes. Still blocks third-party framing.
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN",
           },
           {
             key: "X-XSS-Protection",
