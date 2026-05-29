@@ -448,7 +448,7 @@ const EpkWindowContent = () => {
   )
 }
 
-const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindowProps) => {
+export const TerminalWindow = ({ window: win, onClose, onFocus, onDrag }: TerminalWindowProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [isPlaying, setIsPlaying] = useState(globalIsPlaying)
@@ -1377,7 +1377,25 @@ const GlitchIcon = ({ icon: Icon, iconClass, className, style, ...props }: {
 
 
 
-export default function HackerHomepage() {
+type LaunchableWindow =
+  | "about"
+  | "work"
+  | "contact"
+  | "music"
+  | "tools"
+  | "writing"
+  | "epk"
+  | "activity"
+
+export default function HackerHomepage({
+  onOpenWindow,
+  onNavigate,
+}: {
+  // When provided (e.g. the 3D version), dock icons / nav links route here
+  // instead of opening an in-page window / navigating. Live site passes none.
+  onOpenWindow?: (type: LaunchableWindow) => void
+  onNavigate?: (href: string, label: string) => void
+} = {}) {
   const [windows, setWindows] = useState<WindowData[]>([])
   const [nextZIndex, setNextZIndex] = useState(1000)
   const [isTerminalActive, setIsTerminalActive] = useState(false)
@@ -2087,7 +2105,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
           {/* bottom left navigation buttons - lowered position */}
           <div className="absolute bottom-0 left-8 flex space-x-6 mb-[-4px]">
             <button
-              onClick={() => openWindow("about")}
+              onClick={() => (onOpenWindow ?? openWindow)("about")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2095,7 +2113,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("work")}
+              onClick={() => (onOpenWindow ?? openWindow)("work")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2103,7 +2121,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("tools")}
+              onClick={() => (onOpenWindow ?? openWindow)("tools")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2111,7 +2129,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("contact")}
+              onClick={() => (onOpenWindow ?? openWindow)("contact")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2119,7 +2137,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("music")}
+              onClick={() => (onOpenWindow ?? openWindow)("music")}
               className={`text-gray-300 hover:text-pink-400 transition-colors group ${globalIsPlaying ? 'animate-pulse' : ''}`}
             >
               <div className={`p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container ${globalIsPlaying ? 'border-green-400/50 shadow-lg shadow-green-400/20' : ''}`}>
@@ -2127,7 +2145,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("writing")}
+              onClick={() => (onOpenWindow ?? openWindow)("writing")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2135,7 +2153,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("epk")}
+              onClick={() => (onOpenWindow ?? openWindow)("epk")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2143,7 +2161,7 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
               </div>
             </button>
             <button
-              onClick={() => openWindow("activity")}
+              onClick={() => (onOpenWindow ?? openWindow)("activity")}
               className="text-gray-300 hover:text-pink-400 transition-colors group"
             >
               <div className="p-3 border border-gray-600 rounded-none group-hover:border-pink-400/50 transition-colors icon-container">
@@ -2169,6 +2187,12 @@ this place is my zero. spiraling into none. enjoy ur stay, friend ｡𖦹°‧`
                   href={link.href}
                   className="text-[#c8f060] hover:text-pink-400 transition-colors no-underline border-b border-transparent hover:border-pink-400/50"
                   style={{ textDecoration: "none" }}
+                  onClick={(e) => {
+                    if (onNavigate) {
+                      e.preventDefault()
+                      onNavigate(link.href, link.label)
+                    }
+                  }}
                 >
                   {link.label}
                 </a>
