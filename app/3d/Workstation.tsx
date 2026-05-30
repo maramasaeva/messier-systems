@@ -29,6 +29,9 @@ export default function Workstation() {
         }}
         dataInterpolation={(p) => `materializing the void — ${p.toFixed(0)}%`}
       />
+      <a className="ws-exit" href="/">
+        ← exit to the plain site
+      </a>
       <div className="ws-hint">
         drag to look around · scroll to zoom · arrows / wasd to move through the void
       </div>
