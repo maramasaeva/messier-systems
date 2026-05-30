@@ -29,7 +29,7 @@ export default function Workstation() {
         }}
         dataInterpolation={(p) => `materializing the void — ${p.toFixed(0)}%`}
       />
-      <a className="ws-exit" href="/">
+      <a className="ws-exit" href="/plain">
         ← exit to the plain site
       </a>
       <div className="ws-hint">

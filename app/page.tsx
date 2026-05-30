@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import HackerHomepage from "../homepage"
+import Workstation from "./3d/Workstation"
 
 export const metadata: Metadata = {
   title: "Mara Masaeva | AI Engineer & Creative Technologist",
@@ -42,9 +42,5 @@ export const metadata: Metadata = {
 }
 
 export default function Home() {
-  return (
-    <div className="w-screen h-screen overflow-hidden p-0 m-0">
-      <HackerHomepage />
-    </div>
-  )
+  return <Workstation />
 }

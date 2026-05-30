@@ -1,13 +1,6 @@
-import type { Metadata } from "next"
-import Workstation from "./Workstation"
+import { redirect } from "next/navigation"
 
-export const metadata: Metadata = {
-  title: "messier // terminal",
-  description:
-    "3D CRT workstation — an experimental spatial interface for messier systems.",
-  robots: { index: false, follow: false },
-}
-
+// the 3D workstation is now the main experience at "/"; keep this path working
 export default function Page() {
-  return <Workstation />
+  redirect("/")
 }
