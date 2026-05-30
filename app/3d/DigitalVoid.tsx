@@ -3,8 +3,25 @@
 import { Grid, Instances, Instance } from "@react-three/drei"
 import { useMemo } from "react"
 import * as THREE from "three"
+import BuildingText from "./BuildingText"
 
 const GROUND_Y = -3.2
+
+// pool of texts projected onto the monoliths, drawn from in scene order
+const TEXTS: string[] = [
+  "MY BODY · MY SOFTWARE · ",
+  "// THIS_ORGANISM_AND_DERIVATIVE_GENETIC_MATERIAL_IS_RESTRICTED_INTELLECTUAL_PROPERTY_ · ",
+  "At Least, Be Human · せめて、人間らしく · ",
+  "(1) In the Beginning Is the Dot, or Point. · ",
+  "Don't Trust people in the Cyber World · ",
+  "HIGHFUNCTIONINGFLESH ",
+  "THERE IS NO MEME · I LOVE YOU · ",
+  ">Present Day   >Present Time   >_   ",
+  "Spectrum of Consciousness · ",
+  "Syndrome Syndrome · ",
+  "the night begins to shine · ",
+  "isnt it so beautiful, isnt it so wonderful? · ",
+]
 
 function mulberry32(seed: number) {
   return function () {
@@ -40,14 +57,14 @@ function useBlocks(count: number): Block[] {
 // faint window-grid facade so the monoliths read as dead digital architecture
 function useGridTexture() {
   return useMemo(() => {
-    const s = 128
+    const s = 256
     const c = document.createElement("canvas")
     c.width = c.height = s
     const ctx = c.getContext("2d")!
     ctx.fillStyle = "#c2c8d1"
     ctx.fillRect(0, 0, s, s)
-    ctx.strokeStyle = "#969db0"
-    ctx.lineWidth = 6
+    ctx.strokeStyle = "#a2aab8"
+    ctx.lineWidth = 1.5
     const step = s / 4
     for (let i = 0; i <= 4; i++) {
       ctx.beginPath()
@@ -67,6 +84,51 @@ function useGridTexture() {
 export default function DigitalVoid() {
   const blocks = useBlocks(72)
   const grid = useGridTexture()
+
+  // scatter the texts across monoliths of all sizes, spread around the viewer
+  const placements = useMemo(() => {
+    type Placement = {
+      key: string
+      position: [number, number, number]
+      size: [number, number, number]
+      text: string
+      bandY: number
+      speed: number
+    }
+
+    // any monolith with a wide enough face, within near-to-mid range
+    const cands = blocks
+      .map((b, i) => ({ b, i, rad: Math.hypot(b.pos[0], b.pos[2]) }))
+      .filter((x) => Math.min(x.b.scale[0], x.b.scale[2]) >= 1.3 && x.rad <= 26)
+      .sort((a, c) => a.rad - c.rad)
+      .slice(0, 14)
+
+    let t = 0
+    const nextText = () => TEXTS[t++ % TEXTS.length]
+    const out: Placement[] = []
+
+    cands.forEach((x, k) => {
+      const h = x.b.scale[1]
+      const dir = k % 2 === 0 ? 1 : -1 // alternate scroll direction
+      const speed = (0.03 + (k % 3) * 0.013) * dir
+      const bandY = 0.3 + (k % 4) * 0.14 // 0.30 .. 0.72, varied heights
+      out.push({ key: `${x.i}-a`, position: x.b.pos, size: x.b.scale, text: nextText(), bandY, speed })
+
+      // occasionally a second quote on a tall monolith, scrolling the other way
+      if (h >= 9 && k % 3 === 0) {
+        const bandY2 = bandY > 0.5 ? bandY - 0.32 : bandY + 0.32
+        out.push({
+          key: `${x.i}-b`,
+          position: x.b.pos,
+          size: x.b.scale,
+          text: nextText(),
+          bandY: bandY2,
+          speed: -speed * 0.85,
+        })
+      }
+    })
+    return out
+  }, [blocks])
 
   return (
     <group>
@@ -105,6 +167,18 @@ export default function DigitalVoid() {
           <Instance key={i} position={b.pos} scale={b.scale} />
         ))}
       </Instances>
+
+      {/* text projected around the sides of the monoliths */}
+      {placements.map((p) => (
+        <BuildingText
+          key={p.key}
+          position={p.position}
+          size={p.size}
+          text={p.text}
+          bandY={p.bandY}
+          speed={p.speed}
+        />
+      ))}
     </group>
   )
 }

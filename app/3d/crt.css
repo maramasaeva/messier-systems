@@ -88,6 +88,29 @@
   opacity: 0.6;
 }
 
+/* opened tablets: a touch more transparent than the main screen so the
+   void reads through them more, as requested */
+.crt-shell--tablet {
+  opacity: 0.66;
+}
+
+/* window-kind tablets: stretch the floating TerminalWindow to fill the glass
+   instead of floating in the middle with empty space around it */
+.tablet-fill > div {
+  position: absolute !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.tablet-fill > div > div:last-child {
+  flex: 1 1 auto !important;
+  max-height: none !important;
+}
+
 /* secondary tablet close button */
 .tablet-close {
   width: 26px;

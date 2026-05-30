@@ -30,7 +30,7 @@ export default function Workstation() {
         dataInterpolation={(p) => `materializing the void — ${p.toFixed(0)}%`}
       />
       <div className="ws-hint">
-        drag to look around · scroll to pull back into the void · look up for stars
+        drag to look around · scroll to zoom · arrows / wasd to move through the void
       </div>
     </main>
   )
