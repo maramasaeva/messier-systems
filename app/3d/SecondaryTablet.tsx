@@ -39,6 +39,8 @@ export default function SecondaryTablet({
     | undefined
 
   const [dragging, setDragging] = useState(false)
+  const group = useRef<THREE.Group>(null!)
+  const livePos = useRef<[number, number, number]>(tablet.position)
   const plane = useRef(new THREE.Plane())
   const offset = useRef(new THREE.Vector3())
   const raycaster = useRef(new THREE.Raycaster())
@@ -67,7 +69,10 @@ export default function SecondaryTablet({
     const hit = planeHit(ev.clientX, ev.clientY)
     if (hit) {
       hit.add(offset.current)
-      onMove(tablet.id, [hit.x, hit.y, hit.z])
+      // move the group (mesh + Html) imperatively so they stay in lockstep;
+      // committing to React state every frame made the Html lag a frame behind
+      group.current.position.copy(hit)
+      livePos.current = [hit.x, hit.y, hit.z]
     }
   }
 
@@ -79,12 +84,13 @@ export default function SecondaryTablet({
     if (g?.active) {
       if (controls) controls.enabled = true
       setDragging(false)
+      onMove(tablet.id, livePos.current) // persist the final position once
     }
   }
 
   // begin a press anywhere on the glass; only turns into a drag past the threshold
   function beginGesture(clientX: number, clientY: number) {
-    const pos = new THREE.Vector3(...tablet.position)
+    const pos = group.current.position.clone() // current (possibly dragged) position
     const n = camera.getWorldDirection(new THREE.Vector3()).negate()
     plane.current.setFromNormalAndCoplanarPoint(n, pos)
     const grab = planeHit(clientX, clientY)
@@ -105,7 +111,7 @@ export default function SecondaryTablet({
   }, [])
 
   return (
-    <group position={tablet.position}>
+    <group ref={group} position={tablet.position}>
       {/* glass slab — grab the frame (or anywhere on the content) to move it */}
       <RoundedBox
         args={[glassW, glassH, 0.07]}

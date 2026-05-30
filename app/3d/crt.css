@@ -111,6 +111,31 @@
   max-height: none !important;
 }
 
+/* visible, themed scrollbars inside opened tablets (the default macOS overlay
+   bars auto-hide and vanish on the dark CRT, so content looked unscrollable) */
+.crt-shell--tablet .overflow-y-auto,
+.tablet-fill .overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(244, 114, 182, 0.55) transparent;
+}
+.crt-shell--tablet .overflow-y-auto::-webkit-scrollbar,
+.tablet-fill .overflow-y-auto::-webkit-scrollbar {
+  width: 9px;
+}
+.crt-shell--tablet .overflow-y-auto::-webkit-scrollbar-track,
+.tablet-fill .overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.25);
+}
+.crt-shell--tablet .overflow-y-auto::-webkit-scrollbar-thumb,
+.tablet-fill .overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(244, 114, 182, 0.5);
+  border-radius: 5px;
+}
+.crt-shell--tablet .overflow-y-auto::-webkit-scrollbar-thumb:hover,
+.tablet-fill .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(244, 114, 182, 0.8);
+}
+
 /* secondary tablet close button */
 .tablet-close {
   width: 26px;

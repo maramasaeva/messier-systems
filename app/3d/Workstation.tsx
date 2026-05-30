@@ -33,7 +33,7 @@ export default function Workstation() {
         ← exit to the plain site
       </a>
       <div className="ws-hint">
-        drag to look around · scroll to zoom · arrows / wasd to move through the void
+        drag to look around · scroll to zoom · arrows / asd to move through the void
       </div>
     </main>
   )
