@@ -1465,7 +1465,10 @@ export default function HackerHomepage({
     // Play the video when component mounts
     if (videoRef.current) {
       videoRef.current.play().catch((err: Error) => {
-        console.error('Error playing static overlay video:', err);
+        // play() rejects with AbortError when the element unmounts or autoplay
+        // is paused to save power — both are benign, so don't surface them
+        // (console.error pops the Next.js dev error overlay).
+        if (err?.name !== 'AbortError') console.warn('static overlay video:', err);
       });
     }
   }, []);

@@ -81,6 +81,7 @@ export default function DriftingClouds() {
           ref={(el) => {
             if (el) refs.current[i] = el
           }}
+          raycast={() => null}
           scale={[p.scale, p.scale * 0.6, 1]}
           position={p.base}
         >

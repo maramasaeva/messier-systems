@@ -11,6 +11,8 @@ import MessierSky from "./MessierSky"
 import Character from "./Character"
 import SkyGraph from "./SkyGraph"
 import DriftingClouds from "./DriftingClouds"
+import CursorZoom from "./CursorZoom"
+import Recenter from "./Recenter"
 import Effects from "./Effects"
 import type { LaunchableWindow, Tablet } from "./tablets"
 
@@ -169,14 +171,13 @@ export default function Scene() {
           enableDamping
           dampingFactor={0.07}
           rotateSpeed={0.5}
-          zoomToCursor
-          zoomSpeed={2.4}
-          minDistance={0.02}
-          maxDistance={30}
+          enableZoom={false}
           minPolarAngle={0.25}
           maxPolarAngle={2.5}
           target={[0, 0, 0.1]}
         />
+        <CursorZoom />
+        <Recenter />
 
         {/* soft reflections for the glass */}
         <Environment preset="city" environmentIntensity={0.5} />

@@ -248,6 +248,36 @@
   background: rgba(255, 255, 255, 0.62);
 }
 
+/* "back to centre" — same pill, tucked into the bottom-left corner */
+.ws-recenter {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 15px;
+  color: rgba(40, 44, 52, 0.7);
+  font-family: var(--font-dm-mono), ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(40, 44, 52, 0.18);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.ws-recenter:hover {
+  color: rgba(18, 20, 26, 0.95);
+  border-color: rgba(40, 44, 52, 0.4);
+  background: rgba(255, 255, 255, 0.62);
+}
+
 /* ---- the screen itself ---- */
 .crt {
   position: relative;

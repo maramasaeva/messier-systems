@@ -34,6 +34,12 @@ export default function Workstation() {
       <a className="ws-exit" href="/plain">
         ← exit to the plain site
       </a>
+      <button
+        className="ws-recenter"
+        onClick={() => window.dispatchEvent(new Event("messier-recenter"))}
+      >
+        ↺ back to centre
+      </button>
       <div className="ws-hint">
         drag to look around · scroll to zoom · arrows / asd to move through the void
       </div>
