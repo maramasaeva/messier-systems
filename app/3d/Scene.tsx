@@ -162,6 +162,7 @@ export default function Scene() {
           enableDamping
           dampingFactor={0.07}
           rotateSpeed={0.5}
+          zoomToCursor
           zoomSpeed={2.4}
           minDistance={2.3}
           maxDistance={30}
