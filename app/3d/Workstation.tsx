@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic"
 import { Loader } from "@react-three/drei"
+import EntryMarker from "@/components/EntryMarker"
 import "./crt.css"
 
 const Scene = dynamic(() => import("./Scene"), {
@@ -16,6 +17,7 @@ const Scene = dynamic(() => import("./Scene"), {
 export default function Workstation() {
   return (
     <main className="fixed inset-0 bg-black overflow-hidden select-none">
+      <EntryMarker kind="terminal" />
       <Scene />
       <Loader
         containerStyles={{ background: "#c6cbd3" }}

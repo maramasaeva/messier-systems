@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import BackLink from "@/components/BackLink"
 
 export const metadata: Metadata = {
   title: "Blog | Mara Masaeva - Writing on AI, Sound & Theory",
@@ -112,8 +113,7 @@ export default async function BlogPage() {
           alignItems: "center",
         }}
       >
-        <a
-          href="/"
+        <BackLink
           style={{
             fontSize: "11px",
             letterSpacing: "0.15em",
@@ -123,7 +123,7 @@ export default async function BlogPage() {
           }}
         >
           ← messier.exe
-        </a>
+        </BackLink>
         <div style={{ display: "flex", gap: "2rem" }}>
           <a href="/projects" style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#555550", textDecoration: "none" }}>
             projects

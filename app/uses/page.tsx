@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { epkData } from "@/data/epk"
+import BackLink from "@/components/BackLink"
 
 export const metadata: Metadata = {
   title: "Uses | Mara Masaeva - Tools & Stack",
@@ -64,8 +65,7 @@ export default function UsesPage() {
           alignItems: "center",
         }}
       >
-        <a
-          href="/"
+        <BackLink
           style={{
             fontSize: "11px",
             letterSpacing: "0.15em",
@@ -75,7 +75,7 @@ export default function UsesPage() {
           }}
         >
           ← messier.exe
-        </a>
+        </BackLink>
         <div style={{ display: "flex", gap: "2rem" }}>
           <a href="/projects" style={{ fontSize: "11px", letterSpacing: "0.1em", textTransform: "uppercase" as const, color: "#555550", textDecoration: "none" }}>
             projects

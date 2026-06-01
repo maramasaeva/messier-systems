@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import HackerHomepage from "@/homepage"
+import EntryMarker from "@/components/EntryMarker"
 
 export const metadata: Metadata = {
   title: "Mara Masaeva | messier — classic",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function Plain() {
   return (
     <div className="w-screen h-screen overflow-hidden p-0 m-0">
+      <EntryMarker kind="plain" />
       <HackerHomepage />
       {/* small entry back into the 3D terminal (the main experience) */}
       <a
