@@ -2,7 +2,7 @@
 
 import { RoundedBox, Html, Edges } from "@react-three/drei"
 import { useRef } from "react"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 import * as THREE from "three"
 import ScreenApp from "./ScreenApp"
 import type { LaunchableWindow } from "./tablets"
@@ -23,6 +23,24 @@ export default function FloatingScreen({
   onNavigate?: (href: string, label: string) => void
 }) {
   const group = useRef<THREE.Group>(null!)
+  const gl = useThree((s) => s.gl)
+
+  // the main screen is a DOM overlay (overflow hidden, never scrolls), so wheel
+  // events over it would otherwise be swallowed and never reach OrbitControls.
+  // Re-dispatch them onto the canvas so scroll-to-zoom works over the screen too.
+  const forwardWheel = (e: React.WheelEvent) => {
+    gl.domElement.dispatchEvent(
+      new WheelEvent("wheel", {
+        deltaX: e.deltaX,
+        deltaY: e.deltaY,
+        deltaMode: e.deltaMode,
+        clientX: e.clientX,
+        clientY: e.clientY,
+        bubbles: true,
+        cancelable: true,
+      })
+    )
+  }
 
   // slow, weightless hover
   useFrame(({ clock }) => {
@@ -68,7 +86,9 @@ export default function FloatingScreen({
         zIndexRange={[20, 0]}
         style={{ width: `${DOM_W}px`, height: `${DOM_H}px` }}
       >
-        <ScreenApp onOpenWindow={onOpenWindow} onNavigate={onNavigate} />
+        <div onWheel={forwardWheel} style={{ width: "100%", height: "100%" }}>
+          <ScreenApp onOpenWindow={onOpenWindow} onNavigate={onNavigate} />
+        </div>
       </Html>
 
       {/* very soft cool spill */}
