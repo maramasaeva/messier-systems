@@ -156,18 +156,48 @@ export default function SecondaryTablet({
           style={{ cursor: dragging ? "grabbing" : "grab" }}
         >
           {tablet.kind === "route" ? (
-            <iframe
-              src={tablet.key}
-              title={tablet.label}
+            <div
               style={{
                 width: `${domW}px`,
                 height: `${domH}px`,
-                border: 0,
-                background: "transparent",
-                // let drags over the iframe reach the canvas; allow clicks otherwise
-                pointerEvents: dragging ? "none" : "auto",
+                display: "flex",
+                flexDirection: "column",
+                background: "#0a0a0f",
               }}
-            />
+            >
+              {/* macOS-style title bar — red dot closes (matches terminal windows) */}
+              <div
+                className="bg-gray-900 border-b border-pink-400/30 px-3 py-2 flex items-center gap-2 select-none"
+                style={{ flex: "0 0 auto" }}
+              >
+                <button
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onClose(tablet.id)
+                  }}
+                  className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400 transition-colors"
+                  aria-label="close tablet"
+                />
+                <span className="w-3 h-3 rounded-full bg-yellow-500" />
+                <span className="w-3 h-3 rounded-full bg-green-500" />
+                <span className="text-pink-400 font-mono text-sm ml-3">
+                  messier@terminal: ~{tablet.key}
+                </span>
+              </div>
+              <iframe
+                src={tablet.key}
+                title={tablet.label}
+                style={{
+                  flex: "1 1 auto",
+                  width: "100%",
+                  border: 0,
+                  background: "transparent",
+                  // let drags over the iframe reach the canvas; allow clicks otherwise
+                  pointerEvents: dragging ? "none" : "auto",
+                }}
+              />
+            </div>
           ) : (
             <div
               className="tablet-fill"
@@ -199,23 +229,6 @@ export default function SecondaryTablet({
         </div>
       </Html>
 
-      {/* close button (screen-space, always crisp) — only for route/iframe
-          tablets, which have no in-window red-dot close of their own. Terminal
-          windows close via their own red title-bar dot. */}
-      {tablet.kind === "route" && (
-        <Html position={[glassW / 2 - 0.12, glassH / 2 - 0.05, 0.05]} center>
-          <button
-            className="tablet-close"
-            onClick={(e) => {
-              e.stopPropagation()
-              onClose(tablet.id)
-            }}
-            aria-label="close tablet"
-          >
-            ×
-          </button>
-        </Html>
-      )}
     </group>
   )
 }
