@@ -148,8 +148,8 @@ export default function DigitalVoid() {
         sectionSize={6}
         sectionThickness={1.1}
         sectionColor="#7c889a"
-        fadeDistance={50}
-        fadeStrength={3}
+        fadeDistance={22}
+        fadeStrength={8}
       />
 
       {/* ghost monoliths */}
