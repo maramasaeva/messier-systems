@@ -8,6 +8,7 @@ import FloatingScreen from "./FloatingScreen"
 import SecondaryTablet from "./SecondaryTablet"
 import DigitalVoid from "./DigitalVoid"
 import MessierSky from "./MessierSky"
+import Character from "./Character"
 import Effects from "./Effects"
 import type { LaunchableWindow, Tablet } from "./tablets"
 
@@ -155,16 +156,18 @@ export default function Scene() {
 
         <DigitalVoid />
         <MessierSky />
+        <Character scale={1.1} position={[2.4, -2.1, 1.4]} />
 
         <OrbitControls
           makeDefault
-          enablePan={false}
+          enablePan
+          screenSpacePanning
           enableDamping
           dampingFactor={0.07}
           rotateSpeed={0.5}
           zoomToCursor
           zoomSpeed={2.4}
-          minDistance={2.3}
+          minDistance={0.02}
           maxDistance={30}
           minPolarAngle={0.25}
           maxPolarAngle={1.92}
