@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic"
 import { Loader } from "@react-three/drei"
 import EntryMarker from "@/components/EntryMarker"
+import MusicPlayer from "./MusicPlayer"
 import "./crt.css"
 
 const Scene = dynamic(() => import("./Scene"), {
@@ -43,6 +44,7 @@ export default function Workstation() {
       <div className="ws-hint">
         drag to look around · scroll to zoom · arrows / asd to move through the void
       </div>
+      <MusicPlayer />
     </main>
   )
 }
