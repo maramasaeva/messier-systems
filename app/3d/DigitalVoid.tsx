@@ -4,8 +4,7 @@ import { Grid, Instances, Instance } from "@react-three/drei"
 import { useMemo } from "react"
 import * as THREE from "three"
 import BuildingText from "./BuildingText"
-
-const GROUND_Y = -3.2
+import { GROUND_Y, generateBlocks } from "./void/blocks"
 
 // pool of texts projected onto the monoliths, drawn from in scene order
 const TEXTS: string[] = [
@@ -23,35 +22,8 @@ const TEXTS: string[] = [
   "isnt it so beautiful, isnt it so wonderful? · ",
 ]
 
-function mulberry32(seed: number) {
-  return function () {
-    seed |= 0
-    seed = (seed + 0x6d2b79f5) | 0
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed)
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296
-  }
-}
-
-type Block = { pos: [number, number, number]; scale: [number, number, number] }
-
-function useBlocks(count: number): Block[] {
-  return useMemo(() => {
-    const rnd = mulberry32(2024)
-    const blocks: Block[] = []
-    for (let i = 0; i < count; i++) {
-      // pushed out past the viewer, thinning into the mist
-      const ang = rnd() * Math.PI * 2
-      const rad = 11 + Math.pow(rnd(), 0.5) * 36
-      const x = Math.cos(ang) * rad
-      const z = Math.sin(ang) * rad
-      const h = 2 + rnd() * 15
-      const w = 0.8 + rnd() * 3.2
-      const d = 0.8 + rnd() * 3.2
-      blocks.push({ pos: [x, GROUND_Y + h / 2, z], scale: [w, h, d] })
-    }
-    return blocks
-  }, [count])
+function useBlocks(count: number) {
+  return useMemo(() => generateBlocks(count), [count])
 }
 
 // faint window-grid facade so the monoliths read as dead digital architecture
