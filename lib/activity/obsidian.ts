@@ -16,7 +16,7 @@ export async function fetchObsidianActivity(): Promise<ActivityItem[]> {
     { headers, next: { revalidate: 7200 } }
   )
 
-  if (!res.ok) return []
+  if (!res.ok) { console.warn("[activity] obsidian:", res.status, res.statusText); return [] }
 
   const commits = await res.json()
 

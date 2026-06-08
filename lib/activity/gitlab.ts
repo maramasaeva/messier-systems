@@ -2,7 +2,7 @@ import { ActivityItem } from './types'
 
 export async function fetchGitLabActivity(): Promise<ActivityItem[]> {
   const token = process.env.GITLAB_TOKEN
-  if (!token) return []
+  if (!token) { console.warn("[activity] gitlab: no GITLAB_TOKEN"); return [] }
 
   const res = await fetch(
     'https://gitlab.com/api/v4/events?per_page=100',
@@ -14,7 +14,7 @@ export async function fetchGitLabActivity(): Promise<ActivityItem[]> {
     }
   )
 
-  if (!res.ok) return []
+  if (!res.ok) { console.warn("[activity] gitlab:", res.status, res.statusText); return [] }
 
   const events = await res.json()
 

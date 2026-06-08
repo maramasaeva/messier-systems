@@ -6,7 +6,7 @@ export async function fetchSubstackActivity(): Promise<ActivityItem[]> {
     next: { revalidate: 3600 },
   })
 
-  if (!res.ok) return []
+  if (!res.ok) { console.warn("[activity] substack:", res.status, res.statusText); return [] }
 
   const xml = await res.text()
   const items: ActivityItem[] = []

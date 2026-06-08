@@ -15,7 +15,7 @@ export async function fetchGitHubActivity(): Promise<ActivityItem[]> {
     { headers, next: { revalidate: 3600 } }
   )
 
-  if (!res.ok) return []
+  if (!res.ok) { console.warn("[activity] github:", res.status, res.statusText); return [] }
 
   const events = await res.json()
 
