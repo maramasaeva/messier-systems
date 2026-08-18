@@ -1,29 +1,12 @@
 import type { NextConfig } from "next"
 
 /**
- * messier systems has moved to maramasaeva.com.
+ * messier systems serves its own content again.
  *
- * Everything redirects. Routes whose content has an equivalent on the new site
- * go to that equivalent so inbound links keep landing somewhere useful; the
- * rest fall through to the homepage.
- *
- * These are 307s (permanent: false) on purpose. A 308 is cached hard by
- * browsers and is painful to walk back, and this move is new. Flip
- * `permanent` to true once it's settled and you want search engines to
- * consolidate ranking onto the new domain.
+ * This site used to 307 everything to maramasaeva.com. The redirects are gone:
+ * the routes here (including /plain and /3d) are worth sharing on their own.
+ * maramasaeva.com remains the main site; some content exists in both places.
  */
-const NEW_SITE = "https://maramasaeva.com"
-
-const moved = (source: string, path = ""): {
-  source: string
-  destination: string
-  permanent: boolean
-} => ({
-  source,
-  destination: `${NEW_SITE}${path}`,
-  permanent: false,
-})
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
 
@@ -34,26 +17,6 @@ const nextConfig: NextConfig = {
         hostname: "messier-systems.vercel.app",
       },
     ],
-  },
-
-  async redirects() {
-    return [
-      // content that has a home on the new site
-      moved("/security", "/work/plzdontkillus"),
-      moved("/think", "/writing/think"),
-      moved("/projects", "/work"),
-      moved("/work", "/work"),
-      moved("/demos", "/work"),
-      moved("/demos/:path*", "/work"),
-      moved("/resume", "/about"),
-      moved("/epk", "/about"),
-      moved("/uses", "/about"),
-      moved("/blog", "/writing"),
-      moved("/transmissions", "/writing"),
-
-      // everything else, including /, /plain, /3d, /services and the api routes
-      moved("/:path*"),
-    ]
   },
 
   async headers() {
